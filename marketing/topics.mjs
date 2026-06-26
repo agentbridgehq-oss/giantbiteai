@@ -5,6 +5,13 @@
 //   global-inspired dishes, gut-health ingredients (kimchi, pickled onions, yogurt sauces)
 // - "AI app goes silent once you start cooking" is the most-repeated competitor complaint —
 //   own that gap directly with Coach-focused content
+// - PRIMARY PAYING SEGMENT IS 55+ (confirmed priority, 2026-06-26): 72% of 50+ adults are
+//   on Facebook and active in Facebook groups specifically, vs TikTok which is growing fast
+//   for this age group (+240%) but still secondary. Facebook group posts are the lead
+//   channel for this niche, not an afterthought next to TikTok/Reddit. Voice-assistant
+//   research also shows "food and drinks" skills are an established use case for older
+//   adults, but adoption depends on dead-simple UX (no setup, no jargon) — keep that in
+//   mind for any feature/content aimed at this segment.
 export const CONTENT_PILLARS = [
   {
     id: "leftover-rescue",

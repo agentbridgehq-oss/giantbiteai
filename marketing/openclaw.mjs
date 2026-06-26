@@ -18,16 +18,20 @@ Respond with ONLY a JSON object: {"title": string, "metaDescription": string, "t
 bodyMarkdown should be 500-800 words, with an H1, a few H2s, and a short FAQ section (2-3 Q&As) since FAQ schema helps long-tail search.`;
 
 const SOCIAL_SYSTEM = `You repurpose a blog article into platform-native drafts for GiantBiteAI, an AI cooking app with a generous free tier. Each draft must read as genuinely useful content first — promotion is secondary and light. Never name or imply which AI model/provider powers the app.
+
+GiantBiteAI's primary paying audience is 55+ (it's also for everyone, but 55+ converts best). For this audience, Facebook groups are the lead channel — 72% of 50+ adults are active there, well ahead of TikTok for this age group. Write the Facebook drafts with that priority and care: warm, plain language, no slang or jargon, no assumption of tech familiarity. TikTok/Pinterest/X are secondary/growth channels for a younger audience, not the primary target.
+
 Respond with ONLY a JSON object matching this shape:
 {
   "redditPosts": [{"subreddit": string, "title": string, "body": string}],
   "pinterest": {"title": string, "description": string},
   "twitterThread": string[],
   "tiktokScript": string[],
-  "facebookGroupPost": string
+  "facebookGroupPosts": [{"groupType": string, "post": string}]
 }
 Reddit posts must be value-first (the recipe/tip itself) with at most one soft, non-pushy mention of GiantBiteAI near the end — most cooking subreddits ban direct self-promotion, so write like a community member sharing something useful, not an ad.
-tiktokScript is a numbered list of short on-screen text/voiceover beats (8-12 beats) for a 30-45 second video, no production jargon.`;
+tiktokScript is a numbered list of short on-screen text/voiceover beats (8-12 beats) for a 30-45 second video, no production jargon.
+facebookGroupPosts should have 2 variations targeting different group types (e.g. a budget/frugal-living group and a senior/retiree-focused or general home-cooking group) — these matter more than the other channels, write them with the same care as the blog article itself.`;
 
 async function generateArticle(pillar, seasonHint) {
   const messages = [
@@ -61,6 +65,10 @@ function saveDraft(date, pillar, article, social) {
     .map((p) => `#### r/${p.subreddit} — ${p.title}\n\n${p.body}\n`)
     .join("\n");
 
+  const facebook = social.facebookGroupPosts
+    .map((p) => `#### ${p.groupType}\n\n${p.post}\n`)
+    .join("\n");
+
   const content = `# ${stamp} — ${pillar.id}
 
 > **DRAFT ONLY — not posted anywhere.** Review every section before sharing. Most cooking subreddits restrict or ban self-promotion links — check each subreddit's rules (and your account's karma/age requirements) before posting there.
@@ -76,6 +84,10 @@ ${article.bodyMarkdown}
 ---
 
 ## Social adaptations
+
+### Facebook groups (lead channel — primary 55+ audience)
+
+${facebook}
 
 ### Reddit
 
@@ -93,10 +105,6 @@ ${social.twitterThread.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 ### TikTok script (30-45s)
 
 ${social.tiktokScript.map((t, i) => `${i + 1}. ${t}`).join("\n")}
-
-### Facebook group post
-
-${social.facebookGroupPost}
 `;
 
   writeFileSync(path, content, "utf8");
