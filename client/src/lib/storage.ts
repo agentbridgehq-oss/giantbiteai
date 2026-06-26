@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Recipe } from "./api";
 
 export type Badge =
   | "first_recipe"
@@ -42,6 +43,7 @@ interface StateShape {
   weekStart: string | null;
   plansThisWeek: number;
   freeCoachMessagesUsed: number;
+  savedRecipes: Recipe[];
 }
 
 export const FREE_COACH_MESSAGES = 2;
@@ -92,6 +94,7 @@ function defaultState(): StateShape {
     weekStart: null,
     plansThisWeek: 0,
     freeCoachMessagesUsed: 0,
+    savedRecipes: [],
   };
 }
 
@@ -153,6 +156,20 @@ export function consumeCoachMessage() {
   if (!state.isPro) state.freeCoachMessagesUsed += 1;
   saveState(state);
   return state;
+}
+
+export function isRecipeSaved(title: string): boolean {
+  return getState().savedRecipes.some((r) => r.title === title);
+}
+
+export function toggleSavedRecipe(recipe: Recipe): boolean {
+  const state = getState();
+  const exists = state.savedRecipes.some((r) => r.title === recipe.title);
+  state.savedRecipes = exists
+    ? state.savedRecipes.filter((r) => r.title !== recipe.title)
+    : [recipe, ...state.savedRecipes];
+  saveState(state);
+  return !exists;
 }
 
 export function setPro(value: boolean) {

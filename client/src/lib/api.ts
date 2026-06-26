@@ -62,6 +62,19 @@ export function importRecipe(input: { url?: string; rawText?: string }) {
   return postJSON<{ recipe: Recipe }>("/import-recipe", input);
 }
 
+export function createCheckout(plan: "monthly" | "yearly") {
+  return postJSON<{ url: string }>("/checkout", { plan });
+}
+
+export async function verifyCheckout(sessionId: string) {
+  const res = await fetch(`/api/verify-checkout?session_id=${encodeURIComponent(sessionId)}`);
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error(detail.error || `Request failed (${res.status})`);
+  }
+  return res.json() as Promise<{ paid: boolean }>;
+}
+
 export function generateMealPlan(input: {
   days: number;
   dietary?: string;

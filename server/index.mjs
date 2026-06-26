@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { chatJSON, streamText } from "./gemini.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM } from "./prompts.mjs";
+import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
@@ -125,6 +126,28 @@ app.post("/api/coach", async (req, res) => {
     }
     res.write("data: [DONE]\n\n");
     res.end();
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/checkout", async (req, res) => {
+  try {
+    const { plan = "monthly" } = req.body;
+    const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
+    const url = await createCheckoutSession({ plan, origin });
+    res.json({ url });
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.get("/api/verify-checkout", async (req, res) => {
+  try {
+    const { session_id } = req.query;
+    if (!session_id) throw Object.assign(new Error("Missing session_id"), { status: 400 });
+    const paid = await verifyCheckoutSession(session_id);
+    res.json({ paid });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
   }

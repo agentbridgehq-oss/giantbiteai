@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { showToast } from "../lib/toast";
 
 interface Props {
   title: string;
@@ -38,7 +39,7 @@ export default function HandsFreeMode({ title, steps, onClose }: Props) {
   function toggleListening() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Voice commands aren't supported in this browser — try Chrome.");
+      showToast("Voice commands aren't supported in this browser — try Chrome.");
       return;
     }
     if (listening) {

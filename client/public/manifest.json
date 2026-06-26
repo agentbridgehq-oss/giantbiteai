@@ -1,0 +1,10 @@
+{
+  "name": "GiantBiteAI",
+  "short_name": "GiantBiteAI",
+  "description": "AI Recipe Generator, Meal Planner, and Cooking Coach.",
+  "start_url": "/cook",
+  "display": "standalone",
+  "background_color": "#0a0a0d",
+  "theme_color": "#0a0a0d",
+  "icons": [{ "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" }]
+}

@@ -1,12 +1,40 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { setPro, useGbaState, PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY } from "../lib/storage";
+import { createCheckout, verifyCheckout } from "../lib/api";
+import { showToast } from "../lib/toast";
 
 export default function Pricing() {
   const state = useGbaState();
+  const [params, setParams] = useSearchParams();
+  const [loading, setLoading] = useState<"monthly" | "yearly" | null>(null);
 
-  function unlockPro() {
-    setPro(true);
-    alert("Pro unlocked! Billing isn't live yet, so it's free while we finish that — enjoy unlimited access.");
+  useEffect(() => {
+    const sessionId = params.get("session_id");
+    if (!sessionId) return;
+    verifyCheckout(sessionId)
+      .then(({ paid }) => {
+        if (paid) {
+          setPro(true);
+          showToast("Payment confirmed — Pro unlocked!");
+        } else {
+          showToast("That checkout wasn't completed.");
+        }
+      })
+      .catch(() => showToast("Couldn't verify that payment — contact support if you were charged."))
+      .finally(() => setParams({}, { replace: true }));
+  }, [params, setParams]);
+
+  async function upgrade(plan: "monthly" | "yearly") {
+    setLoading(plan);
+    try {
+      const { url } = await createCheckout(plan);
+      window.location.href = url;
+    } catch {
+      setPro(true);
+      showToast("Billing isn't live yet — Pro unlocked free for now.");
+      setLoading(null);
+    }
   }
 
   return (
@@ -48,12 +76,27 @@ export default function Pricing() {
               ✓ You have Pro
             </button>
           ) : (
-            <button onClick={unlockPro} className="btn-ember mt-6 w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110">
-              Upgrade to Pro
-            </button>
+            <div className="mt-6 space-y-2">
+              <button
+                type="button"
+                onClick={() => upgrade("monthly")}
+                disabled={loading !== null}
+                className="btn-ember w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-60"
+              >
+                {loading === "monthly" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_MONTHLY}/mo`}
+              </button>
+              <button
+                type="button"
+                onClick={() => upgrade("yearly")}
+                disabled={loading !== null}
+                className="w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white disabled:opacity-60"
+              >
+                {loading === "yearly" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_YEARLY}/yr`}
+              </button>
+            </div>
           )}
           <p className="mt-3 text-xs text-gray-500">
-            Billing isn't live yet — Pro is unlocked free for now while that's built.
+            If billing isn't live yet, Pro unlocks free for now instead of redirecting.
           </p>
         </div>
       </div>

@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { Recipe } from "../lib/api";
 import HandsFreeMode from "./HandsFreeMode";
+import { showToast } from "../lib/toast";
+import { isRecipeSaved, toggleSavedRecipe } from "../lib/storage";
 
 export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
   const [handsFree, setHandsFree] = useState(false);
+  const [saved, setSaved] = useState(() => isRecipeSaved(r.title));
 
   function share() {
     const text = `I just cooked "${r.title}" with GiantBiteAI — free AI recipes from whatever's in your kitchen. ${r.summary}`;
@@ -11,8 +14,14 @@ export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
       navigator.share({ title: "GiantBiteAI", text, url: window.location.origin }).catch(() => {});
     } else {
       navigator.clipboard.writeText(`${text} ${window.location.origin}`);
-      alert("Copied to clipboard!");
+      showToast("Copied to clipboard!");
     }
+  }
+
+  function save() {
+    const next = toggleSavedRecipe(r);
+    setSaved(next);
+    showToast(next ? "Saved to My Recipes" : "Removed from My Recipes");
   }
 
   return (
@@ -63,12 +72,23 @@ export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button
+          type="button"
           onClick={() => setHandsFree(true)}
           className="btn-ember rounded-full px-4 py-2 text-xs font-semibold text-white"
         >
           🔊 Hands-Free Mode
         </button>
         <button
+          type="button"
+          onClick={save}
+          className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+            saved ? "border-ember-500 text-ember-400" : "border-char-700 text-gray-300 hover:border-ember-500 hover:text-white"
+          }`}
+        >
+          {saved ? "★ Saved" : "☆ Save Recipe"}
+        </button>
+        <button
+          type="button"
           onClick={share}
           className="rounded-full border border-char-700 px-4 py-2 text-xs font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white"
         >

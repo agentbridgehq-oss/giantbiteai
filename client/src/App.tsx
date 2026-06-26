@@ -6,18 +6,24 @@ import Plan from "./pages/Plan";
 import Coach from "./pages/Coach";
 import Dashboard from "./pages/Dashboard";
 import Pricing from "./pages/Pricing";
+import NotFound from "./pages/NotFound";
+import ToastHost from "./components/ToastHost";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route element={<AppShell />}>
-        <Route path="/cook" element={<Cook />} />
-        <Route path="/plan" element={<Plan />} />
-        <Route path="/coach" element={<Coach />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/pricing" element={<Pricing />} />
-      </Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route element={<AppShell />}>
+          <Route path="/cook" element={<Cook />} />
+          <Route path="/plan" element={<Plan />} />
+          <Route path="/coach" element={<Coach />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/pricing" element={<Pricing />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <ToastHost />
+    </>
   );
 }

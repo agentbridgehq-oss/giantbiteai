@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { BADGE_META, getTopTasteTags, recordInviteClick, useGbaState, type Badge } from "../lib/storage";
+import { showToast } from "../lib/toast";
+import RecipeCard from "../components/RecipeCard";
 
 const ALL_BADGES = Object.keys(BADGE_META) as Badge[];
 
 export default function Dashboard() {
   const state = useGbaState();
   const [copied, setCopied] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
   const referralUrl = `${window.location.origin}/?ref=${state.referralCode}`;
   const tasteTags = getTopTasteTags(state, 6);
 
@@ -22,7 +25,7 @@ export default function Dashboard() {
       navigator.share({ title: "GiantBiteAI", text, url: referralUrl }).catch(() => {});
     } else {
       navigator.clipboard.writeText(`${text} ${referralUrl}`);
-      alert("Copied to clipboard!");
+      showToast("Copied to clipboard!");
     }
   }
 
@@ -40,7 +43,7 @@ export default function Dashboard() {
           <Stat label="💸 Money saved" value={`$${state.moneySavedUsd.toFixed(0)}`} />
           <Stat label="♻️ Meals rescued" value={state.mealsRescued} />
         </div>
-        <button onClick={shareStats} className="mt-5 rounded-full border border-ember-500/50 px-4 py-2 text-xs font-semibold text-ember-300 transition hover:bg-ember-500/10">
+        <button type="button" onClick={shareStats} className="mt-5 rounded-full border border-ember-500/50 px-4 py-2 text-xs font-semibold text-ember-300 transition hover:bg-ember-500/10">
           📤 Share my stats
         </button>
       </div>
@@ -79,6 +82,28 @@ export default function Dashboard() {
         </div>
       )}
 
+      <div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white">My Recipes ({state.savedRecipes.length})</h2>
+          {state.savedRecipes.length > 0 && (
+            <button type="button" onClick={() => setShowSaved((v) => !v)} className="text-sm text-ember-400 hover:underline">
+              {showSaved ? "Hide" : "Show"}
+            </button>
+          )}
+        </div>
+        {state.savedRecipes.length === 0 ? (
+          <p className="mt-2 text-sm text-gray-500">Tap "Save Recipe" on any result to build your collection here.</p>
+        ) : (
+          showSaved && (
+            <div className="mt-4 space-y-6">
+              {state.savedRecipes.map((r) => (
+                <RecipeCard key={r.title} recipe={r} />
+              ))}
+            </div>
+          )
+        )}
+      </div>
+
       <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
         <h2 className="text-lg font-bold text-white">Invite your kitchen crew</h2>
         <p className="mt-1 text-sm text-gray-400">
@@ -90,7 +115,7 @@ export default function Dashboard() {
             value={referralUrl}
             className="flex-1 rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-gray-300"
           />
-          <button onClick={copyInvite} className="btn-ember rounded-xl px-5 py-2.5 text-sm font-semibold text-white">
+          <button type="button" onClick={copyInvite} className="btn-ember rounded-xl px-5 py-2.5 text-sm font-semibold text-white">
             {copied ? "Copied!" : "Copy link"}
           </button>
         </div>

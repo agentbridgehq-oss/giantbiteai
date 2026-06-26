@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { streamCoach, type ChatMessage } from "../lib/api";
 import { touchDailyStreak, getState, canUseCoach, consumeCoachMessage, FREE_COACH_MESSAGES } from "../lib/storage";
 import UpgradePrompt from "../components/UpgradePrompt";
+import { showToast } from "../lib/toast";
 
 const SUGGESTIONS = [
   "Can I substitute butter with oil?",
@@ -83,7 +84,7 @@ export default function Coach() {
   function toggleListening() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Voice input isn't supported in this browser — try Chrome.");
+      showToast("Voice input isn't supported in this browser — try Chrome.");
       return;
     }
     if (listening) {
@@ -107,7 +108,7 @@ export default function Coach() {
   }
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col" style={{ height: "calc(100vh - 160px)" }}>
+    <div className="mx-auto flex h-[calc(100vh-160px)] max-w-2xl flex-col">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-white">AI Cooking Coach</h1>
