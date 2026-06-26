@@ -19,7 +19,7 @@ const TOOLS = [
     to: "/coach",
     emoji: "💬",
     title: "AI Cooking Coach",
-    desc: "Mid-recipe and stuck? Ask in real time — substitutions, safe temps, timing fixes. The thing every other cooking app goes silent on.",
+    desc: "Mid-recipe and stuck? Talk to it — tap the mic, ask out loud, hear the answer back. Substitutions, safe temps, timing fixes. The thing every other cooking app goes silent on.",
     tag: "Live while you cook",
   },
 ];
