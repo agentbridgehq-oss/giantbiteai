@@ -5,6 +5,7 @@ import Cook from "./pages/Cook";
 import Plan from "./pages/Plan";
 import Coach from "./pages/Coach";
 import Dashboard from "./pages/Dashboard";
+import Pricing from "./pages/Pricing";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/plan" element={<Plan />} />
         <Route path="/coach" element={<Coach />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Route>
     </Routes>
   );

@@ -8,7 +8,7 @@ export default function SiteHeader() {
         <Logo />
         <nav className="hidden items-center gap-6 text-sm font-medium text-gray-400 md:flex">
           <a href="#tools" className="hover:text-white">Tools</a>
-          <a href="#compare" className="hover:text-white">Why Free</a>
+          <a href="#compare" className="hover:text-white">Pricing</a>
           <a href="#how" className="hover:text-white">How it Works</a>
           <a href="#faq" className="hover:text-white">FAQ</a>
         </nav>

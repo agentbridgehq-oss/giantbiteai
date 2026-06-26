@@ -1,7 +1,6 @@
 const QA = [
-  { q: "Is it actually free forever?", a: "Yes. The core tools — Recipe Generator, Meal Planner, AI Cooking Coach — run on open-source models and have no subscription, no paywall, and no ads. That's the whole point." },
-  { q: "What's the catch?", a: "No catch. GiantBiteAI is open source. If we ever add an optional premium tier, the free tools you're using today stay free." },
-  { q: "Which AI models power it?", a: "DeepSeek-R1 handles reasoning — turning ingredients into real recipes and plans. Qwen-VL handles vision — identifying ingredients from a photo of your fridge or pantry." },
+  { q: "Is it free?", a: "Yes — the free tier gives you 3 recipes a day, 1 meal plan a week, and a couple of free AI Coach messages to try it. No ads, ever. Pro removes the limits and unlocks the full AI Coach for $4.99/mo." },
+  { q: "What's the catch?", a: "No catch. The free tier is genuinely usable on its own — Pro is for people who want it unlimited, not a bait-and-switch." },
   { q: "Do I need to make an account?", a: "No. Your streak, badges, and saved stats live in your browser. Open the app and start cooking immediately." },
   { q: "How accurate is the photo scanner?", a: "It's good with common fridge/pantry items, but AI vision can still misread items — always double-check the detected ingredient list before cooking, especially for allergens." },
 ];

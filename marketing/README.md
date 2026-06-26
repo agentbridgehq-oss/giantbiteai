@@ -6,7 +6,7 @@ One script, draft-only, no autonomous posting — same boundary used for ClaudeC
 
 `node marketing/openclaw.mjs` picks today's content angle from a researched rotation of pillars (`topics.mjs`), then:
 
-1. Drafts a ~500-800 word blog article (with an FAQ block for long-tail/voice search) on DeepSeek-R1.
+1. Drafts a ~500-800 word blog article (with an FAQ block for long-tail/voice search).
 2. Adapts that article into platform-native drafts: Reddit posts (for specific subreddits), a Pinterest pin, an X/Twitter thread, a TikTok script outline, and a Facebook group post.
 3. Saves everything as one markdown file in `marketing/drafts/YYYY-MM-DD-<pillar>.md`.
 
@@ -35,4 +35,8 @@ This is a script, not a service — nothing here keeps running in the background
 - Windows Task Scheduler, or
 - any cron-like tool you point at this repo.
 
-Needs the same `OPENROUTER_API_KEY` as the app (`.env` at the repo root).
+Needs the same `GEMINI_API_KEY` as the app (`.env` at the repo root).
+
+## Never mention the AI provider
+
+Drafts must never name or imply which AI model/provider powers GiantBiteAI — `ARTICLE_SYSTEM`/`SOCIAL_SYSTEM` in `openclaw.mjs` enforce this, but skim every draft for stray mentions before posting.

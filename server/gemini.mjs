@@ -1,0 +1,93 @@
+const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+function apiKey() {
+  if (!process.env.GEMINI_API_KEY) {
+    throw Object.assign(new Error("Server is missing GEMINI_API_KEY"), { status: 503 });
+  }
+  return process.env.GEMINI_API_KEY;
+}
+
+function toParts(content) {
+  if (typeof content === "string") return [{ text: content }];
+  return content.map((part) => {
+    if (part.type === "text") return { text: part.text };
+    if (part.type === "image_url") {
+      const match = /^data:(.+?);base64,(.*)$/.exec(part.image_url.url);
+      if (match) return { inlineData: { mimeType: match[1], data: match[2] } };
+    }
+    return { text: "" };
+  });
+}
+
+function splitMessages(messages) {
+  const systemParts = messages.filter((m) => m.role === "system").flatMap((m) => toParts(m.content));
+  const contents = messages
+    .filter((m) => m.role !== "system")
+    .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: toParts(m.content) }));
+  return { systemInstruction: systemParts.length ? { parts: systemParts } : undefined, contents };
+}
+
+function stripFence(text) {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  return fenced ? fenced[1].trim() : text.trim();
+}
+
+async function callGemini(path, body) {
+  const res = await fetch(`${API_BASE}/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey() },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw Object.assign(new Error(`AI provider error: ${detail}`), { status: res.status });
+  }
+  return res;
+}
+
+export async function chatJSON({ model, messages, temperature = 0.7 }) {
+  const { systemInstruction, contents } = splitMessages(messages);
+  const res = await callGemini(`${model}:generateContent`, {
+    contents,
+    systemInstruction,
+    generationConfig: { temperature, responseMimeType: "application/json" },
+  });
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "{}";
+  return JSON.parse(stripFence(text));
+}
+
+export async function streamText({ model, messages, temperature = 0.6 }) {
+  const { systemInstruction, contents } = splitMessages(messages);
+  const res = await callGemini(`${model}:streamGenerateContent?alt=sse`, {
+    contents,
+    systemInstruction,
+    generationConfig: { temperature },
+  });
+
+  return (async function* () {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const payload = trimmed.slice(5).trim();
+        if (!payload) continue;
+        try {
+          const json = JSON.parse(payload);
+          const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "";
+          if (text) yield text;
+        } catch {
+          // ignore partial/non-JSON keep-alive lines
+        }
+      }
+    }
+  })();
+}

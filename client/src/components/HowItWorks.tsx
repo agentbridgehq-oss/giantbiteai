@@ -1,6 +1,6 @@
 const STEPS = [
   { n: "01", title: "Show us what you've got", desc: "Snap your fridge or pantry, or just type a list. No barcode scanning, no setup." },
-  { n: "02", title: "Get instant, real recipes", desc: "DeepSeek-R1 reasons through real recipes (not generic filler) in under 10 seconds, built to use what's about to expire first." },
+  { n: "02", title: "Get instant, real recipes", desc: "Real recipes (not generic filler) in under 10 seconds, built to use what's about to expire first." },
   { n: "03", title: "Cook with a coach, build a streak", desc: "Ask the AI Coach anything mid-recipe, then watch your streak, badges, and money saved stack up on your dashboard." },
 ];
 

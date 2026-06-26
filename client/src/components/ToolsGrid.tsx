@@ -5,7 +5,7 @@ const TOOLS = [
     to: "/cook",
     emoji: "🍳",
     title: "Recipe Generator",
-    desc: "Type what's in your kitchen or snap a photo of your fridge. Qwen-VL identifies the ingredients, DeepSeek-R1 turns them into 3 real recipes in seconds — leftovers included.",
+    desc: "Type what's in your kitchen or snap a photo of your fridge. AI identifies the ingredients and turns them into 3 real recipes in seconds — leftovers included.",
     tag: "Photo + text input",
   },
   {
@@ -30,7 +30,7 @@ export default function ToolsGrid() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Three tools. Zero friction.</h2>
-          <p className="mt-3 text-gray-400">Everything runs on open-source models, instantly, with no signup wall.</p>
+          <p className="mt-3 text-gray-400">Fast, instant results, with no signup wall.</p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {TOOLS.map((tool) => (

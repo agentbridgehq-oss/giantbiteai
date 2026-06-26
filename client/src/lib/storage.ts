@@ -36,7 +36,20 @@ interface StateShape {
   referredBy: string | null;
   inviteCount: number;
   tasteTags: Record<string, number>;
+  isPro: boolean;
+  usageDate: string | null;
+  recipesToday: number;
+  weekStart: string | null;
+  plansThisWeek: number;
+  freeCoachMessagesUsed: number;
 }
+
+export const FREE_COACH_MESSAGES = 2;
+
+export const FREE_RECIPES_PER_DAY = 3;
+export const FREE_PLANS_PER_WEEK = 1;
+export const PRO_PRICE_MONTHLY = 4.99;
+export const PRO_PRICE_YEARLY = 39;
 
 const TASTE_KEYWORDS = [
   "italian", "mexican", "asian", "chinese", "japanese", "thai", "indian", "mediterranean", "greek", "french",
@@ -73,7 +86,80 @@ function defaultState(): StateShape {
     referredBy: null,
     inviteCount: 0,
     tasteTags: {},
+    isPro: false,
+    usageDate: null,
+    recipesToday: 0,
+    weekStart: null,
+    plansThisWeek: 0,
+    freeCoachMessagesUsed: 0,
   };
+}
+
+function isoWeekStart(date: Date) {
+  const d = new Date(date);
+  const day = (d.getDay() + 6) % 7; // Monday = 0
+  d.setDate(d.getDate() - day);
+  return d.toISOString().slice(0, 10);
+}
+
+function syncUsageWindow(state: StateShape) {
+  const today = todayStr();
+  if (state.usageDate !== today) {
+    state.usageDate = today;
+    state.recipesToday = 0;
+  }
+  const weekStart = isoWeekStart(new Date());
+  if (state.weekStart !== weekStart) {
+    state.weekStart = weekStart;
+    state.plansThisWeek = 0;
+  }
+  return state;
+}
+
+export function canGenerateRecipe(state: StateShape): boolean {
+  if (state.isPro) return true;
+  syncUsageWindow(state);
+  return state.recipesToday < FREE_RECIPES_PER_DAY;
+}
+
+export function canGeneratePlan(state: StateShape): boolean {
+  if (state.isPro) return true;
+  syncUsageWindow(state);
+  return state.plansThisWeek < FREE_PLANS_PER_WEEK;
+}
+
+export function consumeRecipeUsage() {
+  const state = getState();
+  syncUsageWindow(state);
+  if (!state.isPro) state.recipesToday += 1;
+  saveState(state);
+  return state;
+}
+
+export function consumePlanUsage() {
+  const state = getState();
+  syncUsageWindow(state);
+  if (!state.isPro) state.plansThisWeek += 1;
+  saveState(state);
+  return state;
+}
+
+export function canUseCoach(state: StateShape): boolean {
+  return state.isPro || state.freeCoachMessagesUsed < FREE_COACH_MESSAGES;
+}
+
+export function consumeCoachMessage() {
+  const state = getState();
+  if (!state.isPro) state.freeCoachMessagesUsed += 1;
+  saveState(state);
+  return state;
+}
+
+export function setPro(value: boolean) {
+  const state = getState();
+  state.isPro = value;
+  saveState(state);
+  return state;
 }
 
 export function getState(): StateShape {

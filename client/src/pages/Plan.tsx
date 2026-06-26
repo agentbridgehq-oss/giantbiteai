@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { generateMealPlan, type MealPlanResponse } from "../lib/api";
-import { recordPlanGenerated, touchDailyStreak } from "../lib/storage";
+import { recordPlanGenerated, touchDailyStreak, getState, canGeneratePlan, consumePlanUsage } from "../lib/storage";
+import UpgradePrompt from "../components/UpgradePrompt";
 
 export default function Plan() {
   const [days, setDays] = useState(7);
@@ -11,9 +12,15 @@ export default function Plan() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MealPlanResponse | null>(null);
+  const [quotaBlocked, setQuotaBlocked] = useState(false);
+  const state = getState();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!canGeneratePlan(getState())) {
+      setQuotaBlocked(true);
+      return;
+    }
     setLoading(true);
     setError(null);
     setResult(null);
@@ -21,6 +28,7 @@ export default function Plan() {
       const res = await generateMealPlan({ days, householdSize, budgetLevel, dietary, goals });
       setResult(res);
       recordPlanGenerated(res.estWeeklyCostUsd);
+      consumePlanUsage();
       touchDailyStreak();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -94,6 +102,7 @@ export default function Plan() {
         </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
+        {!state.isPro && <p className="text-xs text-gray-500">Free plan: 1 meal plan per week. Pro is unlimited.</p>}
 
         <button
           type="submit"
@@ -105,7 +114,8 @@ export default function Plan() {
       </form>
 
       <div>
-        {!result && !loading && (
+        {quotaBlocked && <UpgradePrompt reason="You've used this week's free meal plan" />}
+        {!quotaBlocked && !result && !loading && (
           <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl border border-dashed border-char-800 text-gray-500">
             Your week will show up here.
           </div>

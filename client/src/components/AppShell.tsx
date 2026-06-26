@@ -1,6 +1,7 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import Logo from "./Logo";
 import StreakPill from "./StreakPill";
+import { useGbaState } from "../lib/storage";
 
 const TABS = [
   { to: "/cook", label: "Cook", icon: "🍳" },
@@ -10,6 +11,7 @@ const TABS = [
 ];
 
 export default function AppShell() {
+  const state = useGbaState();
   return (
     <div className="min-h-screen bg-char-950">
       <header className="sticky top-0 z-40 border-b border-char-800 bg-char-950/90 backdrop-blur">
@@ -31,7 +33,18 @@ export default function AppShell() {
               </NavLink>
             ))}
           </nav>
-          <StreakPill />
+          <div className="flex items-center gap-2">
+            {state.isPro ? (
+              <Link to="/pricing" className="rounded-full bg-char-800 px-3 py-1.5 text-xs font-semibold text-ember-400">
+                ★ Pro
+              </Link>
+            ) : (
+              <Link to="/pricing" className="btn-ember rounded-full px-3 py-1.5 text-xs font-semibold text-white">
+                Upgrade
+              </Link>
+            )}
+            <StreakPill />
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">

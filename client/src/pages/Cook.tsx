@@ -1,7 +1,16 @@
 import { useRef, useState } from "react";
 import { generateRecipe, importRecipe, type Recipe, type RecipeResponse } from "../lib/api";
-import { recordRecipeGenerated, touchDailyStreak, getState, getTopTasteTags } from "../lib/storage";
+import {
+  recordRecipeGenerated,
+  touchDailyStreak,
+  getState,
+  getTopTasteTags,
+  canGenerateRecipe,
+  consumeRecipeUsage,
+  FREE_RECIPES_PER_DAY,
+} from "../lib/storage";
 import RecipeCard from "../components/RecipeCard";
+import UpgradePrompt from "../components/UpgradePrompt";
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,6 +37,9 @@ export default function Cook() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RecipeResponse | null>(null);
   const [importedRecipe, setImportedRecipe] = useState<Recipe | null>(null);
+  const [quotaBlocked, setQuotaBlocked] = useState(false);
+  const state = getState();
+  const remaining = state.isPro ? null : Math.max(0, FREE_RECIPES_PER_DAY - state.recipesToday);
 
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -40,6 +52,10 @@ export default function Cook() {
     e.preventDefault();
     if (!ingredientsText.trim() && !photoPreview) {
       setError("Add a photo or type at least one ingredient.");
+      return;
+    }
+    if (!canGenerateRecipe(getState())) {
+      setQuotaBlocked(true);
       return;
     }
     setLoading(true);
@@ -60,6 +76,7 @@ export default function Cook() {
       const topSaved = res.recipes[0]?.estMoneySavedUsd ?? 0;
       const tasteText = res.recipes.map((r) => `${r.title} ${r.ingredients.map((i) => i.item).join(" ")}`).join(" ");
       recordRecipeGenerated(topSaved, leftoversMode, Boolean(photoPreview), tasteText);
+      consumeRecipeUsage();
       touchDailyStreak();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -74,6 +91,10 @@ export default function Cook() {
       setError("Paste a recipe link or the recipe text.");
       return;
     }
+    if (!canGenerateRecipe(getState())) {
+      setQuotaBlocked(true);
+      return;
+    }
     setLoading(true);
     setError(null);
     setResult(null);
@@ -84,6 +105,7 @@ export default function Cook() {
       setImportedRecipe(recipe);
       const tasteText = `${recipe.title} ${recipe.ingredients.map((i) => i.item).join(" ")}`;
       recordRecipeGenerated(0, false, false, tasteText);
+      consumeRecipeUsage();
       touchDailyStreak();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't import that recipe.");
@@ -178,6 +200,9 @@ export default function Cook() {
             </label>
 
             {error && <p className="text-sm text-red-400">{error}</p>}
+            {remaining !== null && (
+              <p className="text-xs text-gray-500">{remaining} free recipe{remaining === 1 ? "" : "s"} left today</p>
+            )}
 
             <button
               type="submit"
@@ -211,7 +236,8 @@ export default function Cook() {
       </div>
 
       <div>
-        {!result && !importedRecipe && !loading && (
+        {quotaBlocked && <UpgradePrompt reason={`You've used today's ${FREE_RECIPES_PER_DAY} free recipes`} />}
+        {!quotaBlocked && !result && !importedRecipe && !loading && (
           <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl border border-dashed border-char-800 text-gray-500">
             Your recipes will show up here.
           </div>
@@ -219,7 +245,7 @@ export default function Cook() {
         {loading && (
           <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 rounded-2xl border border-char-800 text-gray-400">
             <span className="flame-flicker text-3xl">🔥</span>
-            DeepSeek-R1 is cooking up ideas...
+            Cooking up ideas...
           </div>
         )}
         {result && (

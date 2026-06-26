@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { streamCoach, type ChatMessage } from "../lib/api";
-import { touchDailyStreak } from "../lib/storage";
+import { touchDailyStreak, getState, canUseCoach, consumeCoachMessage, FREE_COACH_MESSAGES } from "../lib/storage";
+import UpgradePrompt from "../components/UpgradePrompt";
 
 const SUGGESTIONS = [
   "Can I substitute butter with oil?",
@@ -15,9 +16,15 @@ export default function Coach() {
   ]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [blocked, setBlocked] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const state = getState();
 
   async function send(text: string) {
+    if (!canUseCoach(getState())) {
+      setBlocked(true);
+      return;
+    }
     const userMsg: ChatMessage = { role: "user", content: text };
     const next = [...messages, userMsg, { role: "assistant" as const, content: "" }];
     setMessages(next);
@@ -35,6 +42,7 @@ export default function Coach() {
         });
         bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
       }
+      consumeCoachMessage();
       touchDailyStreak();
     } catch (err) {
       setMessages((prev) => {
@@ -49,14 +57,25 @@ export default function Coach() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || streaming) return;
+    if (!input.trim() || streaming || blocked) return;
     send(input.trim());
   }
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col" style={{ height: "calc(100vh - 160px)" }}>
       <h1 className="font-display text-2xl font-bold text-white">AI Cooking Coach</h1>
-      <p className="mb-4 text-sm text-gray-400">Real-time help while your hands are full.</p>
+      <p className="mb-1 text-sm text-gray-400">Real-time help while your hands are full.</p>
+      {!state.isPro && (
+        <p className="mb-4 text-xs text-gray-500">
+          {Math.max(0, FREE_COACH_MESSAGES - state.freeCoachMessagesUsed)} free message{FREE_COACH_MESSAGES - state.freeCoachMessagesUsed === 1 ? "" : "s"} left — Pro gets unlimited Coach access.
+        </p>
+      )}
+
+      {blocked && (
+        <div className="mb-4">
+          <UpgradePrompt reason="You've used your free Coach messages" />
+        </div>
+      )}
 
       <div className="flex-1 space-y-4 overflow-y-auto rounded-2xl border border-char-800 bg-char-900 p-5">
         {messages.map((m, i) => (

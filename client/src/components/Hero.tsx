@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="mx-auto flex max-w-3xl flex-col items-center">
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-char-700 bg-char-900/80 px-4 py-1.5 text-xs font-medium text-gray-300">
           <span className="pulse-dot h-2 w-2 rounded-full bg-green-400" />
-          DeepSeek-R1 + Qwen3-VL &middot; Open Source &middot; Forever Free
+          Recipe Generator &middot; Meal Planner &middot; AI Coach
         </div>
 
         <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
@@ -14,12 +14,12 @@ export default function Hero() {
           <br />
           <span className="text-ember-gradient">Cooking is AI.</span>
           <br />
-          <span className="text-gray-200">And It&apos;s Free.</span>
+          <span className="text-gray-200">Free to Start.</span>
         </h1>
 
         <p className="mt-6 max-w-xl text-base text-gray-400 sm:text-lg">
           Three powerful AI tools. One mission: make cooking smarter, healthier, and waste-free.
-          Powered by DeepSeek-R1. No subscriptions. No ads. No compromises.
+          Generate recipes, plan your week, and get real-time cooking help — no ads, ever.
         </p>
 
         <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">

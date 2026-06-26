@@ -5,19 +5,19 @@ import "dotenv/config";
 import { writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { chatJSON } from "../server/openrouter.mjs";
+import { chatJSON } from "../server/gemini.mjs";
 import { pickTodaysPillar, seasonalHint } from "./topics.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const TEXT_MODEL = process.env.TEXT_MODEL || "deepseek/deepseek-r1";
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
-const ARTICLE_SYSTEM = `You are the content writer for GiantBiteAI, a free, open-source AI cooking app (Recipe Generator, Meal Planner, AI Cooking Coach — no paywall, no ads).
+const ARTICLE_SYSTEM = `You are the content writer for GiantBiteAI, an AI cooking app (Recipe Generator, Meal Planner, AI Cooking Coach) with a generous free tier.
 Write a genuinely useful, specific blog post a real home cook would bookmark — not generic AI filler. Include real technique detail, not just "cook until done."
-Naturally mention GiantBiteAI's relevant free tool once, briefly, where it actually helps — never more than once, never salesy.
+Naturally mention GiantBiteAI's relevant free tool once, briefly, where it actually helps — never more than once, never salesy. Never name or imply which AI model/provider powers the app.
 Respond with ONLY a JSON object: {"title": string, "metaDescription": string, "targetKeyword": string, "bodyMarkdown": string}
 bodyMarkdown should be 500-800 words, with an H1, a few H2s, and a short FAQ section (2-3 Q&As) since FAQ schema helps long-tail search.`;
 
-const SOCIAL_SYSTEM = `You repurpose a blog article into platform-native drafts for a free, open-source AI cooking app called GiantBiteAI. Each draft must read as genuinely useful content first — promotion is secondary and light.
+const SOCIAL_SYSTEM = `You repurpose a blog article into platform-native drafts for GiantBiteAI, an AI cooking app with a generous free tier. Each draft must read as genuinely useful content first — promotion is secondary and light. Never name or imply which AI model/provider powers the app.
 Respond with ONLY a JSON object matching this shape:
 {
   "redditPosts": [{"subreddit": string, "title": string, "body": string}],
@@ -37,7 +37,7 @@ async function generateArticle(pillar, seasonHint) {
       content: `Today's content angle: "${pillar.angle}"\nTarget SEO intent: ${pillar.seo}\nSeasonal context: ${seasonHint}\nRelevant free-tool mention: ${pillar.cta}`,
     },
   ];
-  return chatJSON({ model: TEXT_MODEL, messages, temperature: 0.8 });
+  return chatJSON({ model: MODEL, messages, temperature: 0.8 });
 }
 
 async function generateSocialAdaptations(article, pillar) {
@@ -48,7 +48,7 @@ async function generateSocialAdaptations(article, pillar) {
       content: `Blog article:\nTitle: ${article.title}\n${article.bodyMarkdown}\n\nSuggested subreddits to adapt for: ${pillar.subreddits.join(", ")}\nFree-tool mention to weave in lightly: ${pillar.cta}`,
     },
   ];
-  return chatJSON({ model: TEXT_MODEL, messages, temperature: 0.8 });
+  return chatJSON({ model: MODEL, messages, temperature: 0.8 });
 }
 
 function saveDraft(date, pillar, article, social) {

@@ -1,15 +1,19 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { chatJSON, chatStream } from "./openrouter.mjs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { chatJSON, streamText } from "./gemini.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM } from "./prompts.mjs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CLIENT_DIST = join(__dirname, "..", "client", "dist");
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 
-const TEXT_MODEL = process.env.TEXT_MODEL || "deepseek/deepseek-r1";
-const VISION_MODEL = process.env.VISION_MODEL || "qwen/qwen2.5-vl-72b-instruct";
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
@@ -31,12 +35,10 @@ app.post("/api/recipe", async (req, res) => {
     const tasteLine = tastePreferences.length ? `User taste preferences (lean into these when relevant): ${tastePreferences.join(", ")}.` : "";
     const calorieLine = targetCalories ? `Target roughly ${targetCalories} calories per serving.` : "";
 
-    let model = TEXT_MODEL;
     const baseText = `${intro} ${dietaryLine} ${tasteLine} ${calorieLine}`;
 
     let messages;
     if (photoBase64) {
-      model = VISION_MODEL;
       messages = [
         { role: "system", content: RECIPE_SYSTEM },
         {
@@ -54,7 +56,7 @@ app.post("/api/recipe", async (req, res) => {
       ];
     }
 
-    const result = await chatJSON({ model, messages });
+    const result = await chatJSON({ model: MODEL, messages });
     res.json(result);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
@@ -81,7 +83,7 @@ app.post("/api/import-recipe", async (req, res) => {
       { role: "system", content: RECIPE_IMPORT_SYSTEM },
       { role: "user", content: sourceText },
     ];
-    const recipe = await chatJSON({ model: TEXT_MODEL, messages });
+    const recipe = await chatJSON({ model: MODEL, messages });
     res.json({ recipe });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
@@ -98,7 +100,7 @@ app.post("/api/mealplan", async (req, res) => {
         content: `Build a ${days}-day meal plan for a household of ${householdSize}. Budget level: ${budgetLevel}. Dietary restrictions: ${dietary || "none"}. Goals: ${goals || "general healthy eating"}.`,
       },
     ];
-    const result = await chatJSON({ model: TEXT_MODEL, messages });
+    const result = await chatJSON({ model: MODEL, messages });
     res.json(result);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
@@ -108,8 +110,8 @@ app.post("/api/mealplan", async (req, res) => {
 app.post("/api/coach", async (req, res) => {
   try {
     const { messages = [] } = req.body;
-    const upstream = await chatStream({
-      model: TEXT_MODEL,
+    const upstream = await streamText({
+      model: MODEL,
       messages: [{ role: "system", content: COACH_SYSTEM }, ...messages],
     });
 
@@ -118,9 +120,10 @@ app.post("/api/coach", async (req, res) => {
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();
 
-    for await (const chunk of upstream) {
-      res.write(chunk);
+    for await (const delta of upstream) {
+      res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\n\n`);
     }
+    res.write("data: [DONE]\n\n");
     res.end();
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
@@ -139,6 +142,9 @@ function htmlToText(html) {
     .replace(/\n{2,}/g, "\n")
     .trim();
 }
+
+app.use(express.static(CLIENT_DIST));
+app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(join(CLIENT_DIST, "index.html")));
 
 const PORT = process.env.PORT || 8787;
 app.listen(PORT, () => console.log(`GiantBiteAI server listening on :${PORT}`));
