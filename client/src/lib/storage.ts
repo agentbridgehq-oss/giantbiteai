@@ -1,0 +1,193 @@
+import { useEffect, useState } from "react";
+
+export type Badge =
+  | "first_recipe"
+  | "first_scan"
+  | "leftover_hero"
+  | "planner_pro"
+  | "streak_3"
+  | "streak_7"
+  | "streak_30"
+  | "inviter_1"
+  | "inviter_3";
+
+export const BADGE_META: Record<Badge, { label: string; emoji: string }> = {
+  first_recipe: { label: "First Recipe", emoji: "🍳" },
+  first_scan: { label: "Fridge Scanner", emoji: "📸" },
+  leftover_hero: { label: "Leftover Hero", emoji: "♻️" },
+  planner_pro: { label: "Planner Pro", emoji: "🗓️" },
+  streak_3: { label: "3-Day Streak", emoji: "🔥" },
+  streak_7: { label: "Week of Fire", emoji: "🔥" },
+  streak_30: { label: "Forged in Flame", emoji: "🔥" },
+  inviter_1: { label: "Brought a Friend", emoji: "🤝" },
+  inviter_3: { label: "Kitchen Crew", emoji: "👥" },
+};
+
+interface StateShape {
+  streak: number;
+  lastActiveDate: string | null;
+  longestStreak: number;
+  badges: Badge[];
+  moneySavedUsd: number;
+  mealsRescued: number;
+  recipesGenerated: number;
+  plansGenerated: number;
+  referralCode: string;
+  referredBy: string | null;
+  inviteCount: number;
+  tasteTags: Record<string, number>;
+}
+
+const TASTE_KEYWORDS = [
+  "italian", "mexican", "asian", "chinese", "japanese", "thai", "indian", "mediterranean", "greek", "french",
+  "spicy", "creamy", "grilled", "roasted", "baked", "fried", "soup", "salad", "pasta", "rice", "noodles",
+  "chicken", "beef", "pork", "fish", "shrimp", "tofu", "vegetarian", "vegan", "egg", "cheese", "beans",
+];
+
+export function extractTasteTags(text: string): string[] {
+  const lower = text.toLowerCase();
+  return TASTE_KEYWORDS.filter((kw) => lower.includes(kw));
+}
+
+const KEY = "giantbiteai_state_v1";
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function randomCode() {
+  return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+function defaultState(): StateShape {
+  return {
+    streak: 0,
+    lastActiveDate: null,
+    longestStreak: 0,
+    badges: [],
+    moneySavedUsd: 0,
+    mealsRescued: 0,
+    recipesGenerated: 0,
+    plansGenerated: 0,
+    referralCode: randomCode(),
+    referredBy: null,
+    inviteCount: 0,
+    tasteTags: {},
+  };
+}
+
+export function getState(): StateShape {
+  if (typeof window === "undefined") return defaultState();
+  try {
+    const raw = window.localStorage.getItem(KEY);
+    if (!raw) return seedAndSave();
+    return { ...defaultState(), ...JSON.parse(raw) };
+  } catch {
+    return seedAndSave();
+  }
+}
+
+function seedAndSave() {
+  const s = defaultState();
+  saveState(s);
+  return s;
+}
+
+export function saveState(state: StateShape) {
+  window.localStorage.setItem(KEY, JSON.stringify(state));
+  window.dispatchEvent(new CustomEvent("gba:state", { detail: state }));
+}
+
+export function touchDailyStreak(): StateShape {
+  const state = getState();
+  const today = todayStr();
+  if (state.lastActiveDate === today) return state;
+
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  state.streak = state.lastActiveDate === yesterday ? state.streak + 1 : 1;
+  state.lastActiveDate = today;
+  state.longestStreak = Math.max(state.longestStreak, state.streak);
+
+  awardBadge(state, "streak_3", state.streak >= 3);
+  awardBadge(state, "streak_7", state.streak >= 7);
+  awardBadge(state, "streak_30", state.streak >= 30);
+
+  saveState(state);
+  return state;
+}
+
+function awardBadge(state: StateShape, badge: Badge, condition: boolean) {
+  if (condition && !state.badges.includes(badge)) state.badges.push(badge);
+}
+
+export function recordRecipeGenerated(
+  moneySavedUsd: number,
+  isLeftovers: boolean,
+  usedPhoto: boolean,
+  tasteText = ""
+) {
+  const state = getState();
+  state.recipesGenerated += 1;
+  state.moneySavedUsd += Math.max(0, moneySavedUsd);
+  if (isLeftovers) state.mealsRescued += 1;
+
+  for (const tag of extractTasteTags(tasteText)) {
+    state.tasteTags[tag] = (state.tasteTags[tag] || 0) + 1;
+  }
+
+  awardBadge(state, "first_recipe", true);
+  if (usedPhoto) awardBadge(state, "first_scan", true);
+  if (isLeftovers) awardBadge(state, "leftover_hero", true);
+
+  saveState(state);
+  return state;
+}
+
+export function getTopTasteTags(state: StateShape, n = 5): string[] {
+  return Object.entries(state.tasteTags)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+    .map(([tag]) => tag);
+}
+
+export function recordPlanGenerated(estWeeklyCostUsd: number) {
+  const state = getState();
+  state.plansGenerated += 1;
+  awardBadge(state, "planner_pro", true);
+  saveState(state);
+  return state;
+}
+
+export function registerReferral(code: string) {
+  const state = getState();
+  if (!state.referredBy && code && code !== state.referralCode) {
+    state.referredBy = code;
+    saveState(state);
+  }
+  return state;
+}
+
+export function recordInviteClick() {
+  const state = getState();
+  state.inviteCount += 1;
+  awardBadge(state, "inviter_1", state.inviteCount >= 1);
+  awardBadge(state, "inviter_3", state.inviteCount >= 3);
+  saveState(state);
+  return state;
+}
+
+export function useGbaState(): StateShape {
+  const [state, setState] = useState<StateShape>(() => getState());
+
+  useEffect(() => {
+    const handler = () => setState(getState());
+    window.addEventListener("gba:state", handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener("gba:state", handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+
+  return state;
+}

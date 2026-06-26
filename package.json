@@ -1,0 +1,24 @@
+{
+  "name": "giantbiteai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GiantBiteAI — free, open-source AI cooking tools powered by DeepSeek-R1 and Qwen-VL",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n SERVER,CLIENT -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --watch server/index.mjs",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "start": "node server/index.mjs",
+    "install:all": "npm install && npm --prefix client install",
+    "marketing": "node marketing/openclaw.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

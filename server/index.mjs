@@ -1,0 +1,144 @@
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { chatJSON, chatStream } from "./openrouter.mjs";
+import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM } from "./prompts.mjs";
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: "15mb" }));
+
+const TEXT_MODEL = process.env.TEXT_MODEL || "deepseek/deepseek-r1";
+const VISION_MODEL = process.env.VISION_MODEL || "qwen/qwen2.5-vl-72b-instruct";
+
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+app.post("/api/recipe", async (req, res) => {
+  try {
+    const {
+      ingredientsText = "",
+      photoBase64,
+      dietary = "",
+      leftoversMode = false,
+      tastePreferences = [],
+      targetCalories,
+    } = req.body;
+
+    const intro = leftoversMode
+      ? "These are leftovers/odds and ends that need to become a new meal before they go bad."
+      : "Generate recipes using mainly these ingredients, assuming basic pantry staples (oil, salt, pepper, flour) are available.";
+    const dietaryLine = dietary ? `Dietary restriction/goal: ${dietary}.` : "";
+    const tasteLine = tastePreferences.length ? `User taste preferences (lean into these when relevant): ${tastePreferences.join(", ")}.` : "";
+    const calorieLine = targetCalories ? `Target roughly ${targetCalories} calories per serving.` : "";
+
+    let model = TEXT_MODEL;
+    const baseText = `${intro} ${dietaryLine} ${tasteLine} ${calorieLine}`;
+
+    let messages;
+    if (photoBase64) {
+      model = VISION_MODEL;
+      messages = [
+        { role: "system", content: RECIPE_SYSTEM },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: `${baseText}\nFirst identify the food items visible in the photo, then use them as the ingredient list.${ingredientsText ? ` Also account for these additional ingredients: ${ingredientsText}` : ""}` },
+            { type: "image_url", image_url: { url: photoBase64 } },
+          ],
+        },
+      ];
+    } else {
+      messages = [
+        { role: "system", content: RECIPE_SYSTEM },
+        { role: "user", content: `${baseText}\nIngredients on hand: ${ingredientsText}` },
+      ];
+    }
+
+    const result = await chatJSON({ model, messages });
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/import-recipe", async (req, res) => {
+  try {
+    const { url = "", rawText = "" } = req.body;
+    let sourceText = rawText;
+
+    if (url) {
+      const pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
+      if (!pageRes.ok) throw Object.assign(new Error(`Couldn't fetch that link (${pageRes.status})`), { status: 422 });
+      const html = await pageRes.text();
+      sourceText = htmlToText(html).slice(0, 12000);
+    }
+
+    if (!sourceText.trim()) {
+      throw Object.assign(new Error("Paste a recipe link or the recipe text."), { status: 400 });
+    }
+
+    const messages = [
+      { role: "system", content: RECIPE_IMPORT_SYSTEM },
+      { role: "user", content: sourceText },
+    ];
+    const recipe = await chatJSON({ model: TEXT_MODEL, messages });
+    res.json({ recipe });
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/mealplan", async (req, res) => {
+  try {
+    const { days = 7, dietary = "", householdSize = 2, budgetLevel = "moderate", goals = "" } = req.body;
+    const messages = [
+      { role: "system", content: MEALPLAN_SYSTEM },
+      {
+        role: "user",
+        content: `Build a ${days}-day meal plan for a household of ${householdSize}. Budget level: ${budgetLevel}. Dietary restrictions: ${dietary || "none"}. Goals: ${goals || "general healthy eating"}.`,
+      },
+    ];
+    const result = await chatJSON({ model: TEXT_MODEL, messages });
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/coach", async (req, res) => {
+  try {
+    const { messages = [] } = req.body;
+    const upstream = await chatStream({
+      model: TEXT_MODEL,
+      messages: [{ role: "system", content: COACH_SYSTEM }, ...messages],
+    });
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    for await (const chunk of upstream) {
+      res.write(chunk);
+    }
+    res.end();
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+function htmlToText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{2,}/g, "\n")
+    .trim();
+}
+
+const PORT = process.env.PORT || 8787;
+app.listen(PORT, () => console.log(`GiantBiteAI server listening on :${PORT}`));
