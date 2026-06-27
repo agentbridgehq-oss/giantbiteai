@@ -37,28 +37,28 @@ export default function Pantry() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="font-display text-2xl font-bold text-white">My Pantry</h1>
-      <p className="mt-1 text-sm text-gray-400">
+      <h1 className="font-display text-2xl font-bold text-slate-900">My Pantry</h1>
+      <p className="mt-1 text-sm text-slate-500">
         Track what you've got. The Recipe Generator can pull straight from this list.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3 rounded-2xl border border-char-800 bg-char-900 p-5 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <label className="mb-1.5 block text-sm font-semibold text-gray-300">Item</label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-700">Item</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. chicken thighs"
-            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-300">Expires (optional)</label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-700">Expires (optional)</label>
           <input
             type="date"
             value={expiresAt}
             onChange={(e) => setExpiresAt(e.target.value)}
-            className="rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white outline-none focus:border-ember-500"
+            className="rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-ember-500"
           />
         </div>
         <button type="submit" className="btn-ember rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-glow">
@@ -67,7 +67,7 @@ export default function Pantry() {
       </form>
 
       {sorted.length === 0 ? (
-        <p className="mt-8 text-center text-sm text-gray-500">Your pantry is empty — add what you've got above.</p>
+        <p className="mt-8 text-center text-sm text-slate-500">Your pantry is empty — add what you've got above.</p>
       ) : (
         <div className="mt-6 space-y-2">
           {sorted.map((item) => {
@@ -81,9 +81,9 @@ export default function Pantry() {
                 }`}
               >
                 <div>
-                  <span className="text-sm font-medium text-white">{item.name}</span>
+                  <span className="text-sm font-medium text-slate-900">{item.name}</span>
                   {days !== null && (
-                    <span className={`ml-2 text-xs ${urgent ? "text-ember-400" : "text-gray-500"}`}>
+                    <span className={`ml-2 text-xs ${urgent ? "text-ember-400" : "text-slate-500"}`}>
                       {days < 0 ? "expired" : days === 0 ? "expires today" : `expires in ${days}d`}
                     </span>
                   )}
@@ -91,7 +91,7 @@ export default function Pantry() {
                 <button
                   type="button"
                   onClick={() => removePantryItem(item.name)}
-                  className="text-xs text-gray-500 hover:text-red-400"
+                  className="text-xs text-slate-500 hover:text-red-400"
                 >
                   Remove
                 </button>
@@ -102,7 +102,7 @@ export default function Pantry() {
       )}
 
       {sorted.length > 0 && (
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-slate-500">
           <Link to="/cook" className="text-ember-400 hover:underline">
             Use this pantry in the Recipe Generator →
           </Link>

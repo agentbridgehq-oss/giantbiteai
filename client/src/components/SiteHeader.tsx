@@ -6,11 +6,11 @@ export default function SiteHeader() {
     <header className="border-b border-char-800/60 bg-char-950/80 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Logo />
-        <nav className="hidden items-center gap-6 text-sm font-medium text-gray-400 md:flex">
-          <a href="#tools" className="hover:text-white">Tools</a>
-          <a href="#compare" className="hover:text-white">Pricing</a>
-          <a href="#how" className="hover:text-white">How it Works</a>
-          <a href="#faq" className="hover:text-white">FAQ</a>
+        <nav className="hidden items-center gap-6 text-sm font-medium text-slate-500 md:flex">
+          <a href="#tools" className="hover:text-slate-900">Tools</a>
+          <a href="#compare" className="hover:text-slate-900">Pricing</a>
+          <a href="#how" className="hover:text-slate-900">How it Works</a>
+          <a href="#faq" className="hover:text-slate-900">FAQ</a>
         </nav>
         <Link
           to="/cook"

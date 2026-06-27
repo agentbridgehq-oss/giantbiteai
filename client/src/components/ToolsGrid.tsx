@@ -29,8 +29,8 @@ export default function ToolsGrid() {
     <section id="tools" className="px-4 py-20">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Three tools. Zero friction.</h2>
-          <p className="mt-3 text-gray-400">Fast, instant results, with no signup wall.</p>
+          <h2 className="font-display text-3xl font-bold text-slate-900 sm:text-4xl">Three tools. Zero friction.</h2>
+          <p className="mt-3 text-slate-500">Fast, instant results, with no signup wall.</p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {TOOLS.map((tool) => (
@@ -40,10 +40,10 @@ export default function ToolsGrid() {
               className="group flex flex-col rounded-2xl border border-char-800 bg-char-900 p-6 transition hover:-translate-y-1 hover:border-ember-500/50 hover:shadow-glow"
             >
               <span className="text-3xl">{tool.emoji}</span>
-              <h3 className="mt-4 text-lg font-bold text-white">{tool.title}</h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-400">{tool.desc}</p>
+              <h3 className="mt-4 text-lg font-bold text-slate-900">{tool.title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-500">{tool.desc}</p>
               <div className="mt-5 flex items-center justify-between">
-                <span className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-gray-400">{tool.tag}</span>
+                <span className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-slate-500">{tool.tag}</span>
                 <span className="text-ember-400 transition group-hover:translate-x-1">→</span>
               </div>
             </Link>

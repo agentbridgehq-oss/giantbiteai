@@ -12,16 +12,16 @@ export default function ViralCallout() {
     <section className="px-4 py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Built to brag about</h2>
-          <p className="mt-3 text-gray-400">The fun parts other recipe apps skip.</p>
+          <h2 className="font-display text-3xl font-bold text-slate-900 sm:text-4xl">Built to brag about</h2>
+          <p className="mt-3 text-slate-500">The fun parts other recipe apps skip.</p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {ITEMS.map((it) => (
             <div key={it.title} className="flex gap-4 rounded-2xl bg-char-900/40 p-5">
               <span className="text-2xl">{it.emoji}</span>
               <div>
-                <h3 className="font-bold text-white">{it.title}</h3>
-                <p className="mt-1 text-sm text-gray-400">{it.desc}</p>
+                <h3 className="font-bold text-slate-900">{it.title}</h3>
+                <p className="mt-1 text-sm text-slate-500">{it.desc}</p>
               </div>
             </div>
           ))}

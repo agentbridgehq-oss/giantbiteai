@@ -4,8 +4,8 @@ export default function UpgradePrompt({ reason }: { reason: string }) {
   return (
     <div className="flex h-full min-h-[260px] flex-col items-center justify-center gap-3 rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-8 text-center">
       <span className="text-3xl">🔒</span>
-      <p className="font-display text-lg font-bold text-white">{reason}</p>
-      <p className="max-w-sm text-sm text-gray-400">
+      <p className="font-display text-lg font-bold text-slate-900">{reason}</p>
+      <p className="max-w-sm text-sm text-slate-500">
         Upgrade to GiantBiteAI Pro for unlimited recipes, unlimited meal plans, and full access to the AI Cooking Coach.
       </p>
       <Link

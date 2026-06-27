@@ -32,8 +32,8 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Your Dashboard</h1>
-        <p className="text-sm text-gray-400">Everything below lives only in this browser — no account needed.</p>
+        <h1 className="font-display text-2xl font-bold text-slate-900">Your Dashboard</h1>
+        <p className="text-sm text-slate-500">Everything below lives only in this browser — no account needed.</p>
       </div>
 
       <div className="rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-6">
@@ -49,7 +49,7 @@ export default function Dashboard() {
       </div>
 
       <div>
-        <h2 className="text-lg font-bold text-white">Badges</h2>
+        <h2 className="text-lg font-bold text-slate-900">Badges</h2>
         <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5">
           {ALL_BADGES.map((b) => {
             const earned = state.badges.includes(b);
@@ -61,7 +61,7 @@ export default function Dashboard() {
                 }`}
               >
                 <span className="text-2xl">{BADGE_META[b].emoji}</span>
-                <span className="text-xs font-medium text-gray-300">{BADGE_META[b].label}</span>
+                <span className="text-xs font-medium text-slate-700">{BADGE_META[b].label}</span>
               </div>
             );
           })}
@@ -70,8 +70,8 @@ export default function Dashboard() {
 
       {tasteTags.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold text-white">Your Taste Profile</h2>
-          <p className="text-sm text-gray-400">Built from what you've cooked — future recipes lean into this.</p>
+          <h2 className="text-lg font-bold text-slate-900">Your Taste Profile</h2>
+          <p className="text-sm text-slate-500">Built from what you've cooked — future recipes lean into this.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {tasteTags.map((tag) => (
               <span key={tag} className="rounded-full bg-char-800 px-3 py-1.5 text-sm font-medium capitalize text-ember-300">
@@ -84,7 +84,7 @@ export default function Dashboard() {
 
       <div>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">My Recipes ({state.savedRecipes.length})</h2>
+          <h2 className="text-lg font-bold text-slate-900">My Recipes ({state.savedRecipes.length})</h2>
           {state.savedRecipes.length > 0 && (
             <button type="button" onClick={() => setShowSaved((v) => !v)} className="text-sm text-ember-400 hover:underline">
               {showSaved ? "Hide" : "Show"}
@@ -92,7 +92,7 @@ export default function Dashboard() {
           )}
         </div>
         {state.savedRecipes.length === 0 ? (
-          <p className="mt-2 text-sm text-gray-500">Tap "Save Recipe" on any result to build your collection here.</p>
+          <p className="mt-2 text-sm text-slate-500">Tap "Save Recipe" on any result to build your collection here.</p>
         ) : (
           showSaved && (
             <div className="mt-4 space-y-6">
@@ -105,21 +105,21 @@ export default function Dashboard() {
       </div>
 
       <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
-        <h2 className="text-lg font-bold text-white">Invite your kitchen crew</h2>
-        <p className="mt-1 text-sm text-gray-400">
+        <h2 className="text-lg font-bold text-slate-900">Invite your kitchen crew</h2>
+        <p className="mt-1 text-sm text-slate-500">
           No paywall to unlock — just bragging rights. Invite 3 friends to earn Kitchen Crew status.
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <input
             readOnly
             value={referralUrl}
-            className="flex-1 rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-gray-300"
+            className="flex-1 rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-700"
           />
           <button type="button" onClick={copyInvite} className="btn-ember rounded-xl px-5 py-2.5 text-sm font-semibold text-white">
             {copied ? "Copied!" : "Copy link"}
           </button>
         </div>
-        <p className="mt-2 text-xs text-gray-500">{state.inviteCount} invite link {state.inviteCount === 1 ? "copy" : "copies"} so far.</p>
+        <p className="mt-2 text-xs text-slate-500">{state.inviteCount} invite link {state.inviteCount === 1 ? "copy" : "copies"} so far.</p>
       </div>
     </div>
   );
@@ -128,8 +128,8 @@ export default function Dashboard() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="text-xs text-gray-400">{label}</div>
+      <div className="text-2xl font-bold text-slate-900">{value}</div>
+      <div className="text-xs text-slate-500">{label}</div>
     </div>
   );
 }

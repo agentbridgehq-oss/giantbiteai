@@ -111,21 +111,21 @@ export default function Coach() {
     <div className="mx-auto flex h-[calc(100vh-160px)] max-w-2xl flex-col">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-white">AI Cooking Coach</h1>
-          <p className="text-sm text-gray-400">Real-time help while your hands are full.</p>
+          <h1 className="font-display text-2xl font-bold text-slate-900">AI Cooking Coach</h1>
+          <p className="text-sm text-slate-500">Real-time help while your hands are full.</p>
         </div>
         <button
           type="button"
           onClick={() => setVoiceMode((v) => !v)}
           className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-            voiceMode ? "border-ember-500 text-ember-400" : "border-char-700 text-gray-400"
+            voiceMode ? "border-ember-500 text-ember-400" : "border-char-700 text-slate-500"
           }`}
         >
           {voiceMode ? "🔊 Voice mode on" : "🔇 Voice mode off"}
         </button>
       </div>
       {!state.isPro && (
-        <p className="mb-4 mt-1 text-xs text-gray-500">
+        <p className="mb-4 mt-1 text-xs text-slate-500">
           {Math.max(0, FREE_COACH_MESSAGES - state.freeCoachMessagesUsed)} free message{FREE_COACH_MESSAGES - state.freeCoachMessagesUsed === 1 ? "" : "s"} left — Pro gets unlimited Coach access.
         </p>
       )}
@@ -141,7 +141,7 @@ export default function Coach() {
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                m.role === "user" ? "btn-ember text-white" : "bg-char-800 text-gray-200"
+                m.role === "user" ? "btn-ember text-white" : "bg-char-800 text-slate-700"
               }`}
             >
               {m.content || (streaming && i === messages.length - 1 ? "…" : "")}
@@ -158,7 +158,7 @@ export default function Coach() {
               key={s}
               type="button"
               onClick={() => send(s)}
-              className="rounded-full border border-char-700 px-3 py-1.5 text-xs text-gray-400 transition hover:border-ember-500 hover:text-white"
+              className="rounded-full border border-char-700 px-3 py-1.5 text-xs text-slate-500 transition hover:border-ember-500 hover:text-slate-900"
             >
               {s}
             </button>
@@ -171,7 +171,7 @@ export default function Coach() {
           type="button"
           onClick={toggleListening}
           className={`shrink-0 rounded-full border px-4 py-3 text-sm font-semibold transition ${
-            listening ? "border-ember-500 text-ember-400" : "border-char-700 text-gray-300"
+            listening ? "border-ember-500 text-ember-400" : "border-char-700 text-slate-700"
           }`}
         >
           {listening ? "🎤 Listening…" : "🎤"}
@@ -180,7 +180,7 @@ export default function Coach() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask anything mid-cook, or tap the mic..."
-          className="flex-1 rounded-full border border-char-700 bg-char-900 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+          className="flex-1 rounded-full border border-char-700 bg-char-900 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
         />
         <button
           type="submit"

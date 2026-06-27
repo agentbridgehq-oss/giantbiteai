@@ -43,7 +43,7 @@ function UnitConverter() {
 
   return (
     <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
-      <h2 className="font-display text-lg font-bold text-white">Unit Converter</h2>
+      <h2 className="font-display text-lg font-bold text-slate-900">Unit Converter</h2>
       <div className="mt-4 flex gap-1 rounded-full border border-char-800 bg-char-950 p-1">
         {(["volume", "weight"] as const).map((c) => (
           <button
@@ -51,7 +51,7 @@ function UnitConverter() {
             type="button"
             onClick={() => switchCategory(c)}
             className={`flex-1 rounded-full py-1.5 text-xs font-semibold capitalize transition ${
-              category === c ? "btn-ember text-white" : "text-gray-400"
+              category === c ? "btn-ember text-white" : "text-slate-500"
             }`}
           >
             {c}
@@ -63,30 +63,30 @@ function UnitConverter() {
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-20 rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-white outline-none focus:border-ember-500"
+          className="w-20 rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-slate-900 outline-none focus:border-ember-500"
         />
         <select
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="rounded-xl border border-char-700 bg-char-950 px-2 py-2 text-sm text-white outline-none focus:border-ember-500"
+          className="rounded-xl border border-char-700 bg-char-950 px-2 py-2 text-sm text-slate-900 outline-none focus:border-ember-500"
         >
           {units.map((u) => (
             <option key={u} value={u}>{u}</option>
           ))}
         </select>
-        <span className="pb-2 text-gray-500">→</span>
+        <span className="pb-2 text-slate-500">→</span>
         <select
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          className="rounded-xl border border-char-700 bg-char-950 px-2 py-2 text-sm text-white outline-none focus:border-ember-500"
+          className="rounded-xl border border-char-700 bg-char-950 px-2 py-2 text-sm text-slate-900 outline-none focus:border-ember-500"
         >
           {units.map((u) => (
             <option key={u} value={u}>{u}</option>
           ))}
         </select>
       </div>
-      <p className="mt-4 text-2xl font-bold text-ember-400">{result ?? "—"} <span className="text-sm text-gray-400">{to}</span></p>
-      <p className="mt-1 text-xs text-gray-500">Volume/weight conversions are exact. Cups-to-grams varies by ingredient density, so use a kitchen scale for baking precision.</p>
+      <p className="mt-4 text-2xl font-bold text-ember-400">{result ?? "—"} <span className="text-sm text-slate-500">{to}</span></p>
+      <p className="mt-1 text-xs text-slate-500">Volume/weight conversions are exact. Cups-to-grams varies by ingredient density, so use a kitchen scale for baking precision.</p>
     </div>
   );
 }
@@ -125,8 +125,8 @@ function RecipeScaler({ savedRecipes }: { savedRecipes: Recipe[] }) {
 
   return (
     <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
-      <h2 className="font-display text-lg font-bold text-white">Recipe Scaler</h2>
-      <p className="mt-1 text-sm text-gray-400">Scale any recipe up or down by servings.</p>
+      <h2 className="font-display text-lg font-bold text-slate-900">Recipe Scaler</h2>
+      <p className="mt-1 text-sm text-slate-500">Scale any recipe up or down by servings.</p>
 
       {savedRecipes.length > 0 && (
         <select
@@ -136,7 +136,7 @@ function RecipeScaler({ savedRecipes }: { savedRecipes: Recipe[] }) {
             const recipe = savedRecipes.find((r) => r.title === e.target.value);
             if (recipe) setTargetServings(recipe.servings);
           }}
-          className="mt-4 w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white outline-none focus:border-ember-500"
+          className="mt-4 w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-ember-500"
         >
           <option value="">Paste ingredients manually...</option>
           {savedRecipes.map((r) => (
@@ -151,43 +151,43 @@ function RecipeScaler({ savedRecipes }: { savedRecipes: Recipe[] }) {
           onChange={(e) => setManualLines(e.target.value)}
           placeholder={"2 cups flour\n1 tsp salt\n3 eggs"}
           rows={5}
-          className="mt-3 w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+          className="mt-3 w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
         />
       )}
 
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-300">Original servings</label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-700">Original servings</label>
           <input
             type="number"
             min={1}
             disabled={Boolean(selected)}
             value={selected ? selected.servings : originalServings}
             onChange={(e) => setOriginalServings(Number(e.target.value))}
-            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-white outline-none focus:border-ember-500 disabled:opacity-50"
+            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-slate-900 outline-none focus:border-ember-500 disabled:opacity-50"
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-300">Target servings</label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-700">Target servings</label>
           <input
             type="number"
             min={1}
             value={targetServings}
             onChange={(e) => setTargetServings(Number(e.target.value))}
-            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-white outline-none focus:border-ember-500"
+            className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-slate-900 outline-none focus:border-ember-500"
           />
         </div>
       </div>
 
       {lines.length > 0 && (
         <div className="mt-5 rounded-xl border border-char-800 bg-char-950 p-4">
-          <h3 className="text-sm font-semibold text-white">Scaled ingredients ({ratio.toFixed(2)}×)</h3>
-          <ul className="mt-2 space-y-1 text-sm text-gray-300">
+          <h3 className="text-sm font-semibold text-slate-900">Scaled ingredients ({ratio.toFixed(2)}×)</h3>
+          <ul className="mt-2 space-y-1 text-sm text-slate-700">
             {lines.map((line, i) => (
               <li key={i}>• {scaleAmount(line, ratio)}</li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-gray-500">Amounts without a clear number (like "a pinch") are left as-is.</p>
+          <p className="mt-2 text-xs text-slate-500">Amounts without a clear number (like "a pinch") are left as-is.</p>
         </div>
       )}
     </div>
@@ -200,8 +200,8 @@ export default function Tools() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Kitchen Tools</h1>
-        <p className="mt-1 text-sm text-gray-400">Quick utilities — instant, no quota used.</p>
+        <h1 className="font-display text-2xl font-bold text-slate-900">Kitchen Tools</h1>
+        <p className="mt-1 text-sm text-slate-500">Quick utilities — instant, no quota used.</p>
       </div>
       <UnitConverter />
       <RecipeScaler savedRecipes={state.savedRecipes} />

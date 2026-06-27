@@ -11,15 +11,15 @@ export default function Academy() {
     <div className="mx-auto max-w-3xl">
       <div className="text-center">
         <span className="rounded-full bg-ember-500/10 px-3 py-1 text-xs font-semibold text-ember-400">PRO BONUS</span>
-        <h1 className="mt-3 font-display text-2xl font-bold text-white sm:text-3xl">GiantBiteAI Academy</h1>
-        <p className="mt-2 text-sm text-gray-400">
+        <h1 className="mt-3 font-display text-2xl font-bold text-slate-900 sm:text-3xl">GiantBiteAI Academy</h1>
+        <p className="mt-2 text-sm text-slate-500">
           Real technique guides — knife skills, flavor building, nutrition basics. No fluff, no 10-hour video series.
         </p>
       </div>
 
       {!state.isPro && (
         <div className="mt-6 rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-5 text-center">
-          <p className="text-sm text-gray-300">Lesson previews are free. Full guides are a Pro perk.</p>
+          <p className="text-sm text-slate-700">Lesson previews are free. Full guides are a Pro perk.</p>
           <Link to="/pricing" className="btn-ember mt-3 inline-block rounded-full px-5 py-2 text-sm font-semibold text-white">
             See Pro pricing →
           </Link>
@@ -29,7 +29,7 @@ export default function Academy() {
       <div className="mt-8 space-y-8">
         {TRACKS.map((track) => (
           <div key={track}>
-            <h2 className="text-lg font-bold text-white">{track}</h2>
+            <h2 className="text-lg font-bold text-slate-900">{track}</h2>
             <div className="mt-3 space-y-3">
               {LESSONS.filter((l) => l.track === track).map((lesson) => (
                 <LessonCard
@@ -63,18 +63,18 @@ function LessonCard({
     <div className="rounded-2xl border border-char-800 bg-char-900 p-5">
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between gap-3 text-left">
         <div>
-          <h3 className="font-semibold text-white">{lesson.title}</h3>
-          <p className="mt-1 text-sm text-gray-400">{lesson.summary}</p>
-          <p className="mt-1.5 text-xs text-gray-500">⏱ {lesson.minutes} min read</p>
+          <h3 className="font-semibold text-slate-900">{lesson.title}</h3>
+          <p className="mt-1 text-sm text-slate-500">{lesson.summary}</p>
+          <p className="mt-1.5 text-xs text-slate-500">⏱ {lesson.minutes} min read</p>
         </div>
-        <span className="shrink-0 text-gray-500">{unlocked ? (open ? "−" : "+") : "🔒"}</span>
+        <span className="shrink-0 text-slate-500">{unlocked ? (open ? "−" : "+") : "🔒"}</span>
       </button>
       {open && (
-        <div className="mt-4 space-y-3 border-t border-char-800 pt-4 text-sm leading-relaxed text-gray-300">
+        <div className="mt-4 space-y-3 border-t border-char-800 pt-4 text-sm leading-relaxed text-slate-700">
           {unlocked ? (
             lesson.body.map((p, i) => <p key={i}>{p}</p>)
           ) : (
-            <p className="text-gray-500">{lesson.body[0]} <Link to="/pricing" className="text-ember-400 hover:underline">Unlock the full lesson with Pro →</Link></p>
+            <p className="text-slate-500">{lesson.body[0]} <Link to="/pricing" className="text-ember-400 hover:underline">Unlock the full lesson with Pro →</Link></p>
           )}
         </div>
       )}

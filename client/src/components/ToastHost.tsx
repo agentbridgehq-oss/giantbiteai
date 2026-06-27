@@ -28,7 +28,7 @@ export default function ToastHost() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className="rounded-full border border-char-700 bg-char-900 px-5 py-2.5 text-sm font-medium text-white shadow-lg"
+          className="rounded-full border border-char-700 bg-char-900 px-5 py-2.5 text-sm font-medium text-slate-900 shadow-lg"
         >
           {t.message}
         </div>

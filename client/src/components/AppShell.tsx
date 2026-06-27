@@ -34,7 +34,7 @@ export default function AppShell() {
                 to={t.to}
                 className={({ isActive }) =>
                   `flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                    isActive ? "btn-ember text-white" : "text-gray-400 hover:text-white"
+                    isActive ? "btn-ember text-white" : "text-slate-500 hover:text-slate-900"
                   }`
                 }
               >
@@ -46,7 +46,7 @@ export default function AppShell() {
               <button
                 type="button"
                 onClick={() => setMoreOpen((v) => !v)}
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-gray-400 transition hover:text-white"
+                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-slate-500 transition hover:text-slate-900"
               >
                 <span>⋯</span>
                 <span className="hidden sm:inline">More</span>
@@ -67,7 +67,7 @@ export default function AppShell() {
                         onClick={() => setMoreOpen(false)}
                         className={({ isActive }) =>
                           `flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
-                            isActive ? "bg-ember-500/10 text-ember-400" : "text-gray-300 hover:bg-char-800 hover:text-white"
+                            isActive ? "bg-ember-500/10 text-ember-400" : "text-slate-700 hover:bg-char-800 hover:text-slate-900"
                           }`
                         }
                       >

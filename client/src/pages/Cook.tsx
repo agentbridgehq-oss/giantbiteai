@@ -121,14 +121,14 @@ export default function Cook() {
           <button
             type="button"
             onClick={() => setMode("ingredients")}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "ingredients" ? "btn-ember text-white" : "text-gray-400"}`}
+            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "ingredients" ? "btn-ember text-white" : "text-slate-500"}`}
           >
             From Ingredients
           </button>
           <button
             type="button"
             onClick={() => setMode("import")}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "import" ? "btn-ember text-white" : "text-gray-400"}`}
+            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "import" ? "btn-ember text-white" : "text-slate-500"}`}
           >
             Import a Recipe
           </button>
@@ -136,12 +136,12 @@ export default function Cook() {
 
         {mode === "ingredients" ? (
           <form onSubmit={handleGenerate} className="space-y-5 rounded-2xl border border-char-800 bg-char-900 p-6">
-            <h1 className="font-display text-2xl font-bold text-white">Recipe Generator</h1>
-            <p className="text-sm text-gray-400">Type what you have, or snap your fridge/pantry.</p>
+            <h1 className="font-display text-2xl font-bold text-slate-900">Recipe Generator</h1>
+            <p className="text-sm text-slate-500">Type what you have, or snap your fridge/pantry.</p>
 
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="block text-sm font-semibold text-gray-300">Ingredients</label>
+                <label className="block text-sm font-semibold text-slate-700">Ingredients</label>
                 {state.pantryItems.length > 0 && (
                   <button
                     type="button"
@@ -157,12 +157,12 @@ export default function Cook() {
                 onChange={(e) => setIngredientsText(e.target.value)}
                 placeholder="e.g. chicken thighs, half a bell pepper, rice, eggs..."
                 rows={4}
-                className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-300">Or upload a photo</label>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Or upload a photo</label>
               <input
                 ref={fileInput}
                 type="file"
@@ -174,7 +174,7 @@ export default function Cook() {
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="w-full rounded-xl border border-dashed border-char-700 bg-char-950 px-3 py-4 text-sm text-gray-400 transition hover:border-ember-500 hover:text-white"
+                className="w-full rounded-xl border border-dashed border-char-700 bg-char-950 px-3 py-4 text-sm text-slate-500 transition hover:border-ember-500 hover:text-slate-900"
               >
                 {photoPreview ? "📸 Photo attached — tap to replace" : "📸 Tap to add a fridge/pantry photo"}
               </button>
@@ -185,34 +185,34 @@ export default function Cook() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-gray-300">Dietary (optional)</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Dietary (optional)</label>
                 <input
                   value={dietary}
                   onChange={(e) => setDietary(e.target.value)}
                   placeholder="vegetarian, gluten-free..."
-                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-gray-300">Cal/serving (optional)</label>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Cal/serving (optional)</label>
                 <input
                   type="number"
                   value={targetCalories}
                   onChange={(e) => setTargetCalories(e.target.value)}
                   placeholder="e.g. 500"
-                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
                 />
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-gray-300">
+            <label className="flex items-center gap-2 text-sm text-slate-700">
               <input type="checkbox" checked={leftoversMode} onChange={(e) => setLeftoversMode(e.target.checked)} className="h-4 w-4 accent-ember-500" />
               ♻️ These are leftovers I need to rescue
             </label>
 
             {error && <p className="text-sm text-red-400">{error}</p>}
             {remaining !== null && (
-              <p className="text-xs text-gray-500">{remaining} free recipe{remaining === 1 ? "" : "s"} left today</p>
+              <p className="text-xs text-slate-500">{remaining} free recipe{remaining === 1 ? "" : "s"} left today</p>
             )}
 
             <button
@@ -225,14 +225,14 @@ export default function Cook() {
           </form>
         ) : (
           <form onSubmit={handleImport} className="space-y-5 rounded-2xl border border-char-800 bg-char-900 p-6">
-            <h1 className="font-display text-2xl font-bold text-white">Import a Recipe</h1>
-            <p className="text-sm text-gray-400">Paste a recipe URL or the raw text — we'll strip the ads and clean it up.</p>
+            <h1 className="font-display text-2xl font-bold text-slate-900">Import a Recipe</h1>
+            <p className="text-sm text-slate-500">Paste a recipe URL or the raw text — we'll strip the ads and clean it up.</p>
             <textarea
               value={importInput}
               onChange={(e) => setImportInput(e.target.value)}
               placeholder="https://example.com/some-recipe or paste the recipe text..."
               rows={6}
-              className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+              className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
             />
             {error && <p className="text-sm text-red-400">{error}</p>}
             <button
@@ -249,12 +249,12 @@ export default function Cook() {
       <div>
         {quotaBlocked && <UpgradePrompt reason={`You've used today's ${FREE_RECIPES_PER_DAY} free recipes`} />}
         {!quotaBlocked && !result && !importedRecipe && !loading && (
-          <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl border border-dashed border-char-800 text-gray-500">
+          <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl border border-dashed border-char-800 text-slate-500">
             Your recipes will show up here.
           </div>
         )}
         {loading && (
-          <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 rounded-2xl border border-char-800 text-gray-400">
+          <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 rounded-2xl border border-char-800 text-slate-500">
             <span className="flame-flicker text-3xl">🔥</span>
             Cooking up ideas...
           </div>
@@ -264,7 +264,7 @@ export default function Cook() {
             {result.detectedIngredients.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {result.detectedIngredients.map((ing) => (
-                  <span key={ing} className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-gray-300">
+                  <span key={ing} className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-slate-700">
                     {ing}
                   </span>
                 ))}

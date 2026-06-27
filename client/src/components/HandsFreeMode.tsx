@@ -66,14 +66,14 @@ export default function HandsFreeMode({ title, steps, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
       <div className="w-full max-w-lg rounded-2xl border border-char-700 bg-char-900 p-8 text-center">
         <p className="text-xs font-semibold uppercase tracking-wide text-ember-400">{title}</p>
-        <p className="mt-2 text-sm text-gray-500">Step {index + 1} of {steps.length}</p>
-        <p className="mt-6 min-h-[120px] font-display text-2xl font-semibold text-white">{steps[index]}</p>
+        <p className="mt-2 text-sm text-slate-500">Step {index + 1} of {steps.length}</p>
+        <p className="mt-6 min-h-[120px] font-display text-2xl font-semibold text-slate-900">{steps[index]}</p>
 
         <div className="mt-8 flex items-center justify-center gap-3">
-          <button onClick={() => go(-1)} disabled={index === 0} className="rounded-full border border-char-700 px-4 py-2 text-sm text-gray-300 disabled:opacity-30">
+          <button onClick={() => go(-1)} disabled={index === 0} className="rounded-full border border-char-700 px-4 py-2 text-sm text-slate-700 disabled:opacity-30">
             ← Back
           </button>
-          <button onClick={() => speak(steps[index])} className="rounded-full border border-char-700 px-4 py-2 text-sm text-gray-300">
+          <button onClick={() => speak(steps[index])} className="rounded-full border border-char-700 px-4 py-2 text-sm text-slate-700">
             🔊 Repeat
           </button>
           <button onClick={() => go(1)} disabled={index === steps.length - 1} className="btn-ember rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-30">
@@ -83,12 +83,12 @@ export default function HandsFreeMode({ title, steps, onClose }: Props) {
 
         <button
           onClick={toggleListening}
-          className={`mt-5 rounded-full border px-4 py-2 text-xs font-semibold ${listening ? "border-ember-500 text-ember-400" : "border-char-700 text-gray-400"}`}
+          className={`mt-5 rounded-full border px-4 py-2 text-xs font-semibold ${listening ? "border-ember-500 text-ember-400" : "border-char-700 text-slate-500"}`}
         >
           {listening ? "🎤 Listening — say 'next', 'back', or 'repeat'" : "🎤 Enable voice commands"}
         </button>
 
-        <button onClick={onClose} className="mt-6 block w-full text-sm text-gray-500 hover:text-gray-300">
+        <button onClick={onClose} className="mt-6 block w-full text-sm text-slate-500 hover:text-slate-700">
           Exit hands-free mode
         </button>
       </div>

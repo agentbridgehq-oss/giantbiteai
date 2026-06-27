@@ -9,15 +9,15 @@ export default function FAQ() {
   return (
     <section id="faq" className="px-4 py-20">
       <div className="mx-auto max-w-3xl">
-        <h2 className="text-center font-display text-3xl font-bold text-white sm:text-4xl">FAQ</h2>
+        <h2 className="text-center font-display text-3xl font-bold text-slate-900 sm:text-4xl">FAQ</h2>
         <div className="mt-10 divide-y divide-char-800 rounded-2xl border border-char-800 bg-char-900">
           {QA.map((item) => (
             <details key={item.q} className="group p-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-white">
+              <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900">
                 {item.q}
-                <span className="text-gray-500 transition group-open:rotate-45">+</span>
+                <span className="text-slate-500 transition group-open:rotate-45">+</span>
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-gray-400">{item.a}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-500">{item.a}</p>
             </details>
           ))}
         </div>
