@@ -7,19 +7,35 @@ import { canUseCoach, getState, registerReferral } from "../lib/storage";
 
 const FOOD_PHOTO = "https://images.unsplash.com/photo-1606728035253-49e8a23146de?auto=format&fit=crop&w=1600&q=80";
 
-function PhoneMockup() {
+function DemoImage() {
   return (
-    <div className="relative mx-auto w-56 rounded-[2rem] border-4 border-char-800 bg-char-950 p-3 shadow-2xl sm:w-64">
-      <div className="rounded-2xl bg-char-900 p-3">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-ember-400">GiantBiteAI Coach</p>
-        <div className="mt-2 space-y-2">
-          <div className="ml-auto max-w-[80%] rounded-xl bg-ember-500 px-2.5 py-1.5 text-[11px] text-white">
-            My sauce is too thin, how do I fix it?
-          </div>
-          <div className="max-w-[85%] rounded-xl bg-char-800 px-2.5 py-1.5 text-[11px] text-gray-200">
-            Simmer uncovered 5–10 min to reduce, or whisk in a cornstarch slurry (1 tsp + 1 tbsp cold water).
+    <div
+      className="relative mx-auto mt-12 aspect-[16/10] max-w-2xl overflow-hidden rounded-2xl border border-char-800 shadow-2xl"
+      style={{
+        backgroundImage: `
+          radial-gradient(ellipse 220px 180px at 18% 8%, rgba(255,180,100,0.55) 0%, rgba(255,180,100,0) 70%),
+          radial-gradient(ellipse 220px 180px at 50% 8%, rgba(255,180,100,0.55) 0%, rgba(255,180,100,0) 70%),
+          linear-gradient(rgba(8,8,10,0.5), rgba(8,8,10,0.55)),
+          url(${FOOD_PHOTO})
+        `,
+        backgroundSize: "100% 100%, 100% 100%, 100% 100%, cover",
+        backgroundPosition: "center 35%",
+      }}
+    >
+      {/* Phone mockup standing beside the dish, matching the reference composition */}
+      <div className="absolute bottom-4 right-[8%] w-24 rounded-xl border-2 border-char-950 bg-char-950/95 p-1.5 shadow-xl sm:w-28">
+        <div className="rounded-md bg-char-900 p-1.5">
+          <p className="text-[6px] font-semibold uppercase tracking-wide text-ember-400">GiantBiteAI</p>
+          <div className="mt-1 h-1.5 w-3/4 rounded bg-char-800" />
+          <div className="mt-1 space-y-0.5">
+            <div className="h-1 w-full rounded bg-char-800" />
+            <div className="h-1 w-5/6 rounded bg-char-800" />
+            <div className="h-1 w-2/3 rounded bg-ember-500/60" />
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-3 left-3 rounded-full bg-black/50 px-3 py-1.5 text-[11px] font-medium text-gray-200 backdrop-blur-sm">
+        🍳 Recipe Generator in action
       </div>
     </div>
   );
@@ -115,9 +131,7 @@ export default function Landing() {
             </Link>
           </div>
 
-          <div className="mt-12">
-            <PhoneMockup />
-          </div>
+          <DemoImage />
         </div>
       </section>
 
