@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { setPro, useGbaState, PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY } from "../lib/storage";
+import { setPro, useGbaState, PRO_PRICE_MONTHLY, REGULAR_PRICE_MONTHLY } from "../lib/storage";
 import { createCheckout, verifyCheckout } from "../lib/api";
 import { showToast } from "../lib/toast";
 
 export default function Pricing() {
   const state = useGbaState();
   const [params, setParams] = useSearchParams();
-  const [loading, setLoading] = useState<"monthly" | "yearly" | null>(null);
+  const [loading, setLoading] = useState<"regular" | "pro" | null>(null);
 
   useEffect(() => {
     const sessionId = params.get("session_id");
@@ -25,7 +25,7 @@ export default function Pricing() {
       .finally(() => setParams({}, { replace: true }));
   }, [params, setParams]);
 
-  async function upgrade(plan: "monthly" | "yearly") {
+  async function upgrade(plan: "regular" | "pro") {
     setLoading(plan);
     try {
       const { url } = await createCheckout(plan);
@@ -44,7 +44,7 @@ export default function Pricing() {
         <p className="mt-3 text-gray-400">Start free. Upgrade if you want it unlimited.</p>
       </div>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
+      <div className="mt-10 grid gap-6 sm:grid-cols-3">
         <div className="rounded-2xl border border-char-800 bg-char-900 p-7">
           <h2 className="text-lg font-bold text-white">Free</h2>
           <p className="mt-1 text-3xl font-bold text-white">$0</p>
@@ -55,16 +55,15 @@ export default function Pricing() {
             <li>✓ Streaks, badges, savings tracker</li>
             <li>✓ No ads, ever</li>
           </ul>
-          <p className="mt-5 text-xs text-gray-500">{state.isPro ? "You're on Pro." : "You're on this plan right now."}</p>
+          <p className="mt-5 text-xs text-gray-500">{state.isPro ? "You're upgraded." : "You're on this plan right now."}</p>
         </div>
 
-        <div className="rounded-2xl border border-ember-500/40 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-7">
-          <h2 className="text-lg font-bold text-white">Pro</h2>
+        <div className="rounded-2xl border border-char-700 bg-char-900 p-7">
+          <h2 className="text-lg font-bold text-white">GiantBiteAI Regular</h2>
           <p className="mt-1 text-3xl font-bold text-white">
-            ${PRO_PRICE_MONTHLY}
+            ${REGULAR_PRICE_MONTHLY}
             <span className="text-sm font-normal text-gray-400">/mo</span>
           </p>
-          <p className="text-xs text-gray-500">or ${PRO_PRICE_YEARLY}/yr</p>
           <ul className="mt-5 space-y-2.5 text-sm text-gray-300">
             <li>✓ Unlimited recipes</li>
             <li>✓ Unlimited meal plans</li>
@@ -74,31 +73,48 @@ export default function Pricing() {
             <li>✓ Everything in Free</li>
           </ul>
           {state.isPro ? (
-            <button disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-gray-400">
+            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-gray-400">
+              ✓ Already upgraded
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => upgrade("regular")}
+              disabled={loading !== null}
+              className="mt-6 w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white disabled:opacity-60"
+            >
+              {loading === "regular" ? "Redirecting…" : `Upgrade — $${REGULAR_PRICE_MONTHLY}/mo`}
+            </button>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-ember-500/40 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-7">
+          <h2 className="text-lg font-bold text-white">GiantBiteAI Pro</h2>
+          <p className="mt-1 text-3xl font-bold text-white">
+            ${PRO_PRICE_MONTHLY}
+            <span className="text-sm font-normal text-gray-400">/mo</span>
+          </p>
+          <ul className="mt-5 space-y-2.5 text-sm text-gray-300">
+            <li>✓ Everything in Regular</li>
+            <li>✓ Priority support</li>
+            <li>✓ Early access to new tools</li>
+          </ul>
+          {state.isPro ? (
+            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-gray-400">
               ✓ You have Pro
             </button>
           ) : (
-            <div className="mt-6 space-y-2">
-              <button
-                type="button"
-                onClick={() => upgrade("monthly")}
-                disabled={loading !== null}
-                className="btn-ember w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-60"
-              >
-                {loading === "monthly" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_MONTHLY}/mo`}
-              </button>
-              <button
-                type="button"
-                onClick={() => upgrade("yearly")}
-                disabled={loading !== null}
-                className="w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white disabled:opacity-60"
-              >
-                {loading === "yearly" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_YEARLY}/yr`}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => upgrade("pro")}
+              disabled={loading !== null}
+              className="btn-ember mt-6 w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-60"
+            >
+              {loading === "pro" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_MONTHLY}/mo`}
+            </button>
           )}
           <p className="mt-3 text-xs text-gray-500">
-            If billing isn't live yet, Pro unlocks free for now instead of redirecting.
+            If billing isn't live yet, upgrades unlock free for now instead of redirecting.
           </p>
         </div>
       </div>

@@ -153,7 +153,7 @@ app.post("/api/pairing", async (req, res) => {
 
 app.post("/api/checkout", async (req, res) => {
   try {
-    const { plan = "monthly" } = req.body;
+    const { plan = "pro" } = req.body;
     const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
     const url = await createCheckoutSession({ plan, origin });
     res.json({ url });

@@ -11,7 +11,7 @@ function getStripe() {
 }
 
 export async function createCheckoutSession({ plan, origin }) {
-  const priceId = plan === "yearly" ? process.env.STRIPE_PRICE_ID_YEARLY : process.env.STRIPE_PRICE_ID_MONTHLY;
+  const priceId = plan === "regular" ? process.env.STRIPE_PRICE_ID_REGULAR : process.env.STRIPE_PRICE_ID_PRO;
   if (!priceId) {
     throw Object.assign(new Error("Payments aren't configured yet"), { status: 503 });
   }

@@ -62,7 +62,7 @@ export function importRecipe(input: { url?: string; rawText?: string }) {
   return postJSON<{ recipe: Recipe }>("/import-recipe", input);
 }
 
-export function createCheckout(plan: "monthly" | "yearly") {
+export function createCheckout(plan: "regular" | "pro") {
   return postJSON<{ url: string }>("/checkout", { plan });
 }
 

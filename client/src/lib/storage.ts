@@ -59,8 +59,8 @@ export const FREE_COACH_MESSAGES = 2;
 
 export const FREE_RECIPES_PER_DAY = 3;
 export const FREE_PLANS_PER_WEEK = 1;
-export const PRO_PRICE_MONTHLY = 7.99;
-export const PRO_PRICE_YEARLY = 69;
+export const REGULAR_PRICE_MONTHLY = 5.99;
+export const PRO_PRICE_MONTHLY = 12.99;
 
 const TASTE_KEYWORDS = [
   "italian", "mexican", "asian", "chinese", "japanese", "thai", "indian", "mediterranean", "greek", "french",
