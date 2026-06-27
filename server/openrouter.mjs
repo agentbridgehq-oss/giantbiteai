@@ -21,6 +21,40 @@ function stripFence(text) {
   return fenced ? fenced[1].trim() : text.trim();
 }
 
+// Some models return literal newlines/tabs inside JSON string values instead of escaping
+// them, which breaks JSON.parse. Escape control characters found inside strings only.
+function safeJsonParse(text) {
+  let inString = false;
+  let escaped = false;
+  let out = "";
+  for (const ch of text) {
+    if (inString) {
+      if (escaped) {
+        out += ch;
+        escaped = false;
+      } else if (ch === "\\") {
+        out += ch;
+        escaped = true;
+      } else if (ch === '"') {
+        out += ch;
+        inString = false;
+      } else if (ch === "\n") {
+        out += "\\n";
+      } else if (ch === "\r") {
+        out += "\\r";
+      } else if (ch === "\t") {
+        out += "\\t";
+      } else {
+        out += ch;
+      }
+    } else {
+      out += ch;
+      if (ch === '"') inString = true;
+    }
+  }
+  return JSON.parse(out);
+}
+
 export async function chatJSON({ messages, temperature = 0.7 }) {
   const model = process.env.OPENROUTER_MODEL || "deepseek/deepseek-r1:free";
   const res = await fetch(ENDPOINT, {
@@ -34,7 +68,7 @@ export async function chatJSON({ messages, temperature = 0.7 }) {
   }
   const data = await res.json();
   const content = data.choices?.[0]?.message?.content ?? "{}";
-  return JSON.parse(stripFence(content));
+  return safeJsonParse(stripFence(content));
 }
 
 export async function streamText({ messages, temperature = 0.6 }) {

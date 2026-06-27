@@ -32,6 +32,40 @@ function stripFence(text) {
   return fenced ? fenced[1].trim() : text.trim();
 }
 
+// Gemini occasionally returns literal newlines/tabs inside JSON string values instead of
+// escaping them, which breaks JSON.parse. Escape control characters found inside strings only.
+function safeJsonParse(text) {
+  let inString = false;
+  let escaped = false;
+  let out = "";
+  for (const ch of text) {
+    if (inString) {
+      if (escaped) {
+        out += ch;
+        escaped = false;
+      } else if (ch === "\\") {
+        out += ch;
+        escaped = true;
+      } else if (ch === '"') {
+        out += ch;
+        inString = false;
+      } else if (ch === "\n") {
+        out += "\\n";
+      } else if (ch === "\r") {
+        out += "\\r";
+      } else if (ch === "\t") {
+        out += "\\t";
+      } else {
+        out += ch;
+      }
+    } else {
+      out += ch;
+      if (ch === '"') inString = true;
+    }
+  }
+  return JSON.parse(out);
+}
+
 async function callGemini(path, body) {
   const res = await fetch(`${API_BASE}/${path}`, {
     method: "POST",
@@ -54,7 +88,7 @@ export async function chatJSON({ model, messages, temperature = 0.7 }) {
   });
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "{}";
-  return JSON.parse(stripFence(text));
+  return safeJsonParse(stripFence(text));
 }
 
 export async function streamText({ model, messages, temperature = 0.6 }) {

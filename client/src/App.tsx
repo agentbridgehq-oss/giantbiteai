@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Landing from "./pages/Landing";
+import Explore from "./pages/Explore";
 import AppShell from "./components/AppShell";
 import Cook from "./pages/Cook";
 import Plan from "./pages/Plan";
@@ -18,6 +19,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/explore" element={<Explore />} />
         <Route element={<AppShell />}>
           <Route path="/cook" element={<Cook />} />
           <Route path="/plan" element={<Plan />} />
