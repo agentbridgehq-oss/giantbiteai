@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { streamCoach, type ChatMessage } from "../lib/api";
-import { touchDailyStreak, getState, canUseCoach, consumeCoachMessage, FREE_COACH_MESSAGES } from "../lib/storage";
+import { touchDailyStreak, getState, canUseCoach, consumeCoachMessage, isProTier, FREE_COACH_MESSAGES } from "../lib/storage";
 import UpgradePrompt from "../components/UpgradePrompt";
 import { showToast } from "../lib/toast";
 
@@ -124,7 +124,7 @@ export default function Coach() {
           {voiceMode ? "🔊 Voice mode on" : "🔇 Voice mode off"}
         </button>
       </div>
-      {!state.isPro && (
+      {!isProTier(state) && (
         <p className="mb-4 mt-1 text-xs text-gray-500">
           {Math.max(0, FREE_COACH_MESSAGES - state.freeCoachMessagesUsed)} free message{FREE_COACH_MESSAGES - state.freeCoachMessagesUsed === 1 ? "" : "s"} left — Pro gets unlimited Coach access.
         </p>

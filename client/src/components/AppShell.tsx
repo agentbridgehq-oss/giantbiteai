@@ -81,9 +81,9 @@ export default function AppShell() {
             </div>
           </nav>
           <div className="flex items-center gap-2">
-            {state.isPro ? (
+            {state.tier !== "free" ? (
               <Link to="/pricing" className="rounded-full bg-char-800 px-3 py-1.5 text-xs font-semibold text-ember-400">
-                ★ Pro
+                ★ {state.tier === "pro" ? "Pro" : "Regular"}
               </Link>
             ) : (
               <Link to="/pricing" className="btn-ember rounded-full px-3 py-1.5 text-xs font-semibold text-white">

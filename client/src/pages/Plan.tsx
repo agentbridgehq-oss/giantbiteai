@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { generateMealPlan, type MealPlanResponse } from "../lib/api";
-import { recordPlanGenerated, touchDailyStreak, getState, canGeneratePlan, consumePlanUsage } from "../lib/storage";
+import { recordPlanGenerated, touchDailyStreak, getState, canGeneratePlan, consumePlanUsage, isPaidTier } from "../lib/storage";
 import UpgradePrompt from "../components/UpgradePrompt";
 
 export default function Plan() {
@@ -102,7 +102,7 @@ export default function Plan() {
         </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
-        {!state.isPro && <p className="text-xs text-gray-500">Free plan: 1 meal plan per week. Pro is unlimited.</p>}
+        {!isPaidTier(state) && <p className="text-xs text-gray-500">Free plan: 1 meal plan per week. Regular and Pro are unlimited.</p>}
 
         <button
           type="submit"

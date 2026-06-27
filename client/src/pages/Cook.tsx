@@ -7,6 +7,7 @@ import {
   getTopTasteTags,
   canGenerateRecipe,
   consumeRecipeUsage,
+  isPaidTier,
   FREE_RECIPES_PER_DAY,
 } from "../lib/storage";
 import RecipeCard from "../components/RecipeCard";
@@ -39,7 +40,7 @@ export default function Cook() {
   const [importedRecipe, setImportedRecipe] = useState<Recipe | null>(null);
   const [quotaBlocked, setQuotaBlocked] = useState(false);
   const state = getState();
-  const remaining = state.isPro ? null : Math.max(0, FREE_RECIPES_PER_DAY - state.recipesToday);
+  const remaining = isPaidTier(state) ? null : Math.max(0, FREE_RECIPES_PER_DAY - state.recipesToday);
 
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

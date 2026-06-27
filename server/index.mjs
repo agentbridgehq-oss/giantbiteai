@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { chatJSON, streamText } from "./gemini.mjs";
+import { chatJSON, streamText } from "./ai.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 

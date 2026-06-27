@@ -45,7 +45,7 @@ interface StateShape {
   referredBy: string | null;
   inviteCount: number;
   tasteTags: Record<string, number>;
-  isPro: boolean;
+  tier: "free" | "regular" | "pro";
   usageDate: string | null;
   recipesToday: number;
   weekStart: string | null;
@@ -97,7 +97,7 @@ function defaultState(): StateShape {
     referredBy: null,
     inviteCount: 0,
     tasteTags: {},
-    isPro: false,
+    tier: "free",
     usageDate: null,
     recipesToday: 0,
     weekStart: null,
@@ -129,14 +129,22 @@ function syncUsageWindow(state: StateShape) {
   return state;
 }
 
+export function isPaidTier(state: StateShape): boolean {
+  return state.tier !== "free";
+}
+
+export function isProTier(state: StateShape): boolean {
+  return state.tier === "pro";
+}
+
 export function canGenerateRecipe(state: StateShape): boolean {
-  if (state.isPro) return true;
+  if (isPaidTier(state)) return true;
   syncUsageWindow(state);
   return state.recipesToday < FREE_RECIPES_PER_DAY;
 }
 
 export function canGeneratePlan(state: StateShape): boolean {
-  if (state.isPro) return true;
+  if (isPaidTier(state)) return true;
   syncUsageWindow(state);
   return state.plansThisWeek < FREE_PLANS_PER_WEEK;
 }
@@ -144,7 +152,7 @@ export function canGeneratePlan(state: StateShape): boolean {
 export function consumeRecipeUsage() {
   const state = getState();
   syncUsageWindow(state);
-  if (!state.isPro) state.recipesToday += 1;
+  if (!isPaidTier(state)) state.recipesToday += 1;
   saveState(state);
   return state;
 }
@@ -152,18 +160,18 @@ export function consumeRecipeUsage() {
 export function consumePlanUsage() {
   const state = getState();
   syncUsageWindow(state);
-  if (!state.isPro) state.plansThisWeek += 1;
+  if (!isPaidTier(state)) state.plansThisWeek += 1;
   saveState(state);
   return state;
 }
 
 export function canUseCoach(state: StateShape): boolean {
-  return state.isPro || state.freeCoachMessagesUsed < FREE_COACH_MESSAGES;
+  return isProTier(state) || state.freeCoachMessagesUsed < FREE_COACH_MESSAGES;
 }
 
 export function consumeCoachMessage() {
   const state = getState();
-  if (!state.isPro) state.freeCoachMessagesUsed += 1;
+  if (!isProTier(state)) state.freeCoachMessagesUsed += 1;
   saveState(state);
   return state;
 }
@@ -197,9 +205,9 @@ export function removePantryItem(name: string) {
   return state;
 }
 
-export function setPro(value: boolean) {
+export function setTier(tier: StateShape["tier"]) {
   const state = getState();
-  state.isPro = value;
+  state.tier = tier;
   saveState(state);
   return state;
 }
@@ -209,7 +217,9 @@ export function getState(): StateShape {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return seedAndSave();
-    return { ...defaultState(), ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    if (!parsed.tier && parsed.isPro) parsed.tier = "pro";
+    return { ...defaultState(), ...parsed };
   } catch {
     return seedAndSave();
   }

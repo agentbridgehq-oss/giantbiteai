@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import Hero from "../components/Hero";
 import ToolsGrid from "../components/ToolsGrid";
+import WeeklyArticle from "../components/WeeklyArticle";
 import CompareTable from "../components/CompareTable";
 import HowItWorks from "../components/HowItWorks";
 import ViralCallout from "../components/ViralCallout";
@@ -32,6 +33,7 @@ export default function Landing() {
       <SiteHeader />
       <Hero />
       <ToolsGrid />
+      <WeeklyArticle />
       <CompareTable />
       <HowItWorks />
       <ViralCallout />

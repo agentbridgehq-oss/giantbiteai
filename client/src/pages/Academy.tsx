@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LESSONS, TRACKS, type Lesson } from "../lib/academyContent";
-import { useGbaState } from "../lib/storage";
+import { useGbaState, isProTier } from "../lib/storage";
 
 export default function Academy() {
   const state = useGbaState();
@@ -17,7 +17,7 @@ export default function Academy() {
         </p>
       </div>
 
-      {!state.isPro && (
+      {!isProTier(state) && (
         <div className="mt-6 rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-5 text-center">
           <p className="text-sm text-gray-300">Lesson previews are free. Full guides are a Pro perk.</p>
           <Link to="/pricing" className="btn-ember mt-3 inline-block rounded-full px-5 py-2 text-sm font-semibold text-white">
@@ -35,7 +35,7 @@ export default function Academy() {
                 <LessonCard
                   key={lesson.id}
                   lesson={lesson}
-                  unlocked={state.isPro}
+                  unlocked={isProTier(state)}
                   open={openId === lesson.id}
                   onToggle={() => setOpenId(openId === lesson.id ? null : lesson.id)}
                 />

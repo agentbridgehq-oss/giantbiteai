@@ -32,7 +32,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Your Dashboard</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="font-display text-2xl font-bold text-white">Your Dashboard</h1>
+          {state.tier !== "free" && (
+            <span className="rounded-full bg-ember-500/10 px-2.5 py-1 text-xs font-semibold text-ember-400">
+              🎁 Founding {state.tier === "pro" ? "Pro" : "Member"}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-gray-400">Everything below lives only in this browser — no account needed.</p>
       </div>
 
