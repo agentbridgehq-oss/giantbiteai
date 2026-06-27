@@ -8,8 +8,8 @@ html {
 
 body {
   font-family: "Inter", system-ui, sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #0a0a0d;
+  color: #e8e8ec;
 }
 
 @keyframes pulse-dot {
@@ -29,22 +29,25 @@ body {
 }
 
 .bg-hero-glow {
-  background: radial-gradient(60% 50% at 50% 0%, rgba(244, 63, 94, 0.14) 0%, rgba(248, 250, 252, 0) 70%);
+  background: radial-gradient(60% 50% at 50% 0%, rgba(249, 115, 22, 0.22) 0%, rgba(10, 10, 13, 0) 70%);
 }
 
 .text-ember-gradient {
-  color: #f43f5e;
+  background-image: linear-gradient(90deg, #fb923c, #ef4444);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .btn-ember {
-  background-image: linear-gradient(90deg, #f43f5e, #fb7185);
+  background-image: linear-gradient(90deg, #f97316, #ef4444);
 }
 
 ::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #f8fafc; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0d; }
+::-webkit-scrollbar-thumb { background: #2a2a33; border-radius: 8px; }
 
 :focus-visible {
-  outline: 2px solid #f43f5e;
+  outline: 2px solid #fb923c;
   outline-offset: 2px;
 }

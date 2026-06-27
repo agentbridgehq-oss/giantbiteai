@@ -40,15 +40,15 @@ export default function Pairing() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="font-display text-2xl font-bold text-slate-900">Drink Pairing</h1>
-      <p className="mt-1 text-sm text-slate-500">Tell us the dish, get four real pairing options.</p>
+      <h1 className="font-display text-2xl font-bold text-white">Drink Pairing</h1>
+      <p className="mt-1 text-sm text-gray-400">Tell us the dish, get four real pairing options.</p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
         <input
           value={dish}
           onChange={(e) => setDish(e.target.value)}
           placeholder="e.g. spicy garlic shrimp pasta"
-          className="flex-1 rounded-full border border-char-700 bg-char-900 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
+          className="flex-1 rounded-full border border-char-700 bg-char-900 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
         />
         <button
           type="submit"
@@ -71,8 +71,8 @@ export default function Pairing() {
           {ROWS.map(({ key, label, emoji }) => (
             <div key={key} className="rounded-2xl border border-char-800 bg-char-900 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-ember-400">{emoji} {label}</p>
-              <p className="mt-1.5 font-display text-lg font-bold text-slate-900">{result[key].suggestion}</p>
-              <p className="mt-1 text-sm text-slate-500">{result[key].why}</p>
+              <p className="mt-1.5 font-display text-lg font-bold text-white">{result[key].suggestion}</p>
+              <p className="mt-1 text-sm text-gray-400">{result[key].why}</p>
             </div>
           ))}
         </div>

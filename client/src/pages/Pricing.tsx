@@ -40,31 +40,31 @@ export default function Pricing() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-bold text-slate-900 sm:text-4xl">Simple pricing</h1>
-        <p className="mt-3 text-slate-500">Start free. Upgrade if you want it unlimited.</p>
+        <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">Simple pricing</h1>
+        <p className="mt-3 text-gray-400">Start free. Upgrade if you want it unlimited.</p>
       </div>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-3">
         <div className="rounded-2xl border border-char-800 bg-char-900 p-7">
-          <h2 className="text-lg font-bold text-slate-900">Free</h2>
-          <p className="mt-1 text-3xl font-bold text-slate-900">$0</p>
-          <ul className="mt-5 space-y-2.5 text-sm text-slate-500">
+          <h2 className="text-lg font-bold text-white">Free</h2>
+          <p className="mt-1 text-3xl font-bold text-white">$0</p>
+          <ul className="mt-5 space-y-2.5 text-sm text-gray-400">
             <li>✓ 3 recipes a day</li>
             <li>✓ 1 meal plan a week</li>
             <li>✓ 2 free AI Coach messages</li>
             <li>✓ Streaks, badges, savings tracker</li>
             <li>✓ No ads, ever</li>
           </ul>
-          <p className="mt-5 text-xs text-slate-500">{state.isPro ? "You're upgraded." : "You're on this plan right now."}</p>
+          <p className="mt-5 text-xs text-gray-500">{state.isPro ? "You're upgraded." : "You're on this plan right now."}</p>
         </div>
 
         <div className="rounded-2xl border border-char-700 bg-char-900 p-7">
-          <h2 className="text-lg font-bold text-slate-900">GiantBiteAI Regular</h2>
-          <p className="mt-1 text-3xl font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-white">GiantBiteAI Regular</h2>
+          <p className="mt-1 text-3xl font-bold text-white">
             ${REGULAR_PRICE_MONTHLY}
-            <span className="text-sm font-normal text-slate-500">/mo</span>
+            <span className="text-sm font-normal text-gray-400">/mo</span>
           </p>
-          <ul className="mt-5 space-y-2.5 text-sm text-slate-700">
+          <ul className="mt-5 space-y-2.5 text-sm text-gray-300">
             <li>✓ Unlimited recipes</li>
             <li>✓ Unlimited meal plans</li>
             <li>✓ Unlimited AI Cooking Coach</li>
@@ -73,7 +73,7 @@ export default function Pricing() {
             <li>✓ Everything in Free</li>
           </ul>
           {state.isPro ? (
-            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-slate-500">
+            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-gray-400">
               ✓ Already upgraded
             </button>
           ) : (
@@ -81,7 +81,7 @@ export default function Pricing() {
               type="button"
               onClick={() => upgrade("regular")}
               disabled={loading !== null}
-              className="mt-6 w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-slate-700 transition hover:border-ember-500 hover:text-slate-900 disabled:opacity-60"
+              className="mt-6 w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white disabled:opacity-60"
             >
               {loading === "regular" ? "Redirecting…" : `Upgrade — $${REGULAR_PRICE_MONTHLY}/mo`}
             </button>
@@ -89,18 +89,18 @@ export default function Pricing() {
         </div>
 
         <div className="rounded-2xl border border-ember-500/40 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-7">
-          <h2 className="text-lg font-bold text-slate-900">GiantBiteAI Pro</h2>
-          <p className="mt-1 text-3xl font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-white">GiantBiteAI Pro</h2>
+          <p className="mt-1 text-3xl font-bold text-white">
             ${PRO_PRICE_MONTHLY}
-            <span className="text-sm font-normal text-slate-500">/mo</span>
+            <span className="text-sm font-normal text-gray-400">/mo</span>
           </p>
-          <ul className="mt-5 space-y-2.5 text-sm text-slate-700">
+          <ul className="mt-5 space-y-2.5 text-sm text-gray-300">
             <li>✓ Everything in Regular</li>
             <li>✓ Priority support</li>
             <li>✓ Early access to new tools</li>
           </ul>
           {state.isPro ? (
-            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-slate-500">
+            <button type="button" disabled className="mt-6 w-full rounded-full bg-char-800 py-3 text-sm font-semibold text-gray-400">
               ✓ You have Pro
             </button>
           ) : (
@@ -113,13 +113,13 @@ export default function Pricing() {
               {loading === "pro" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_MONTHLY}/mo`}
             </button>
           )}
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-xs text-gray-500">
             If billing isn't live yet, upgrades unlock free for now instead of redirecting.
           </p>
         </div>
       </div>
 
-      <p className="mt-8 text-center text-sm text-slate-500">
+      <p className="mt-8 text-center text-sm text-gray-500">
         <Link to="/cook" className="text-ember-400 hover:underline">
           Back to cooking →
         </Link>
