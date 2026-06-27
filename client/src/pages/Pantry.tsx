@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { addPantryItem, removePantryItem, useGbaState } from "../lib/storage";
 
 function daysUntil(dateStr: string) {
-  const diff = new Date(dateStr).getTime() - new Date(todayMidnight()).getTime();
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const target = new Date(y, m - 1, d);
+  const diff = target.getTime() - todayMidnight().getTime();
   return Math.round(diff / 86400000);
 }
 

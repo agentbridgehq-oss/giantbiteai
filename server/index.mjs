@@ -70,7 +70,12 @@ app.post("/api/import-recipe", async (req, res) => {
     let sourceText = rawText;
 
     if (url) {
-      const pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
+      let pageRes;
+      try {
+        pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
+      } catch {
+        throw Object.assign(new Error("Couldn't reach that URL — check it's correct and publicly accessible."), { status: 422 });
+      }
       if (!pageRes.ok) throw Object.assign(new Error(`Couldn't fetch that link (${pageRes.status})`), { status: 422 });
       const html = await pageRes.text();
       sourceText = htmlToText(html).slice(0, 12000);

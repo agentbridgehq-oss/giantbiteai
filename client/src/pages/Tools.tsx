@@ -131,7 +131,11 @@ function RecipeScaler({ savedRecipes }: { savedRecipes: Recipe[] }) {
       {savedRecipes.length > 0 && (
         <select
           value={selectedTitle}
-          onChange={(e) => setSelectedTitle(e.target.value)}
+          onChange={(e) => {
+            setSelectedTitle(e.target.value);
+            const recipe = savedRecipes.find((r) => r.title === e.target.value);
+            if (recipe) setTargetServings(recipe.servings);
+          }}
           className="mt-4 w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white outline-none focus:border-ember-500"
         >
           <option value="">Paste ingredients manually...</option>
