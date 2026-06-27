@@ -53,10 +53,7 @@ interface StateShape {
   freeCoachMessagesUsed: number;
   savedRecipes: Recipe[];
   pantryItems: PantryItem[];
-  mealCalendar: Record<string, string>;
 }
-
-export const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export const FREE_COACH_MESSAGES = 2;
 
@@ -108,24 +105,7 @@ function defaultState(): StateShape {
     freeCoachMessagesUsed: 0,
     savedRecipes: [],
     pantryItems: [],
-    mealCalendar: {},
   };
-}
-
-export function setCalendarMeal(day: string, recipeTitle: string) {
-  const state = getState();
-  state.mealCalendar = { ...state.mealCalendar, [day]: recipeTitle };
-  saveState(state);
-  return state;
-}
-
-export function clearCalendarMeal(day: string) {
-  const state = getState();
-  const next = { ...state.mealCalendar };
-  delete next[day];
-  state.mealCalendar = next;
-  saveState(state);
-  return state;
 }
 
 function isoWeekStart(date: Date) {
