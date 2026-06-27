@@ -23,7 +23,7 @@ Generate exactly 3 distinct recipes when possible. Favor real pantry staples ove
 If the user's taste preferences are provided, lean into them when it doesn't conflict with the ingredients on hand or dietary restrictions — those always take priority.
 If a target calorie count is provided, size portions/ingredients so each serving lands close to that target and reflect the real number in nutrition.calories.`;
 
-export const RECIPE_IMPORT_SYSTEM = `You are GiantBite Importer. You are given raw scraped text from a recipe webpage (it may include menus, ads, comments, and other junk mixed in with the real recipe).
+export const RECIPE_IMPORT_SYSTEM = `You are GiantBite Importer. You are given raw text describing a recipe, either scraped from a recipe webpage (which may include menus, ads, comments, and other junk mixed in with the real recipe) or transcribed from a cooking video's spoken narration (which may be casual, out of order, or missing exact quantities).
 Extract the single real recipe and respond with ONLY a JSON object matching this exact shape, no prose outside the JSON:
 {
   "title": string,

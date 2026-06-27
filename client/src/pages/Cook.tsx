@@ -226,11 +226,11 @@ export default function Cook() {
         ) : (
           <form onSubmit={handleImport} className="space-y-5 rounded-2xl border border-char-800 bg-char-900 p-6">
             <h1 className="font-display text-2xl font-bold text-slate-900">Import a Recipe</h1>
-            <p className="text-sm text-slate-500">Paste a recipe URL or the raw text — we'll strip the ads and clean it up.</p>
+            <p className="text-sm text-slate-500">Paste a recipe URL, a YouTube link, or the raw text — we'll strip the ads (or transcribe the video) and clean it up.</p>
             <textarea
               value={importInput}
               onChange={(e) => setImportInput(e.target.value)}
-              placeholder="https://example.com/some-recipe or paste the recipe text..."
+              placeholder="https://youtube.com/watch?v=... or a recipe URL, or paste the recipe text..."
               rows={6}
               className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-ember-500"
             />

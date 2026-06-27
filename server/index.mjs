@@ -70,15 +70,20 @@ app.post("/api/import-recipe", async (req, res) => {
     let sourceText = rawText;
 
     if (url) {
-      let pageRes;
-      try {
-        pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
-      } catch {
-        throw Object.assign(new Error("Couldn't reach that URL — check it's correct and publicly accessible."), { status: 422 });
+      const youtubeId = extractYouTubeId(url);
+      if (youtubeId) {
+        sourceText = (await fetchYouTubeTranscript(youtubeId)).slice(0, 12000);
+      } else {
+        let pageRes;
+        try {
+          pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
+        } catch {
+          throw Object.assign(new Error("Couldn't reach that URL — check it's correct and publicly accessible."), { status: 422 });
+        }
+        if (!pageRes.ok) throw Object.assign(new Error(`Couldn't fetch that link (${pageRes.status})`), { status: 422 });
+        const html = await pageRes.text();
+        sourceText = htmlToText(html).slice(0, 12000);
       }
-      if (!pageRes.ok) throw Object.assign(new Error(`Couldn't fetch that link (${pageRes.status})`), { status: 422 });
-      const html = await pageRes.text();
-      sourceText = htmlToText(html).slice(0, 12000);
     }
 
     if (!sourceText.trim()) {
@@ -172,6 +177,73 @@ app.get("/api/verify-checkout", async (req, res) => {
     res.status(err.status || 500).json({ error: err.message });
   }
 });
+
+function extractYouTubeId(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1) || null;
+    if (u.hostname.includes("youtube.com")) {
+      if (u.pathname === "/watch") return u.searchParams.get("v");
+      if (u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchYouTubeTranscript(videoId) {
+  const watchRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+    headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" },
+  });
+  if (!watchRes.ok) {
+    throw Object.assign(new Error("Couldn't reach that YouTube video — check the link is correct and public."), { status: 422 });
+  }
+  const watchHtml = await watchRes.text();
+
+  const match = watchHtml.match(/"captionTracks":(\[.*?\])/);
+  if (!match) {
+    throw Object.assign(
+      new Error("That YouTube video doesn't have captions available, so a recipe can't be extracted from it."),
+      { status: 422 }
+    );
+  }
+
+  let tracks;
+  try {
+    tracks = JSON.parse(match[1].replace(/\\u0026/g, "&"));
+  } catch {
+    throw Object.assign(new Error("Couldn't read captions for that video."), { status: 422 });
+  }
+
+  const track = tracks.find((t) => t.languageCode?.startsWith("en")) || tracks[0];
+  if (!track?.baseUrl) {
+    throw Object.assign(new Error("Couldn't read captions for that video."), { status: 422 });
+  }
+
+  const captionRes = await fetch(track.baseUrl);
+  if (!captionRes.ok) {
+    throw Object.assign(new Error("Couldn't download captions for that video."), { status: 422 });
+  }
+  const xml = await captionRes.text();
+
+  const text = [...xml.matchAll(/<text[^>]*>([\s\S]*?)<\/text>/g)]
+    .map((m) =>
+      m[1]
+        .replace(/&amp;/g, "&")
+        .replace(/&#39;/g, "'")
+        .replace(/&quot;/g, '"')
+        .replace(/<[^>]+>/g, "")
+    )
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!text) {
+    throw Object.assign(new Error("That video's captions were empty."), { status: 422 });
+  }
+  return text;
+}
 
 function htmlToText(html) {
   return html
