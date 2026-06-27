@@ -34,6 +34,34 @@ export interface MealPlanResponse {
   wasteReductionNotes: string[];
 }
 
+async function getJSON<T>(path: string): Promise<T> {
+  const res = await fetch(`/api${path}`);
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error(detail.error || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export interface BlogPostMeta {
+  slug: string;
+  title: string;
+  metaDescription: string;
+  date: string;
+}
+
+export interface BlogPost extends BlogPostMeta {
+  bodyMarkdown: string;
+}
+
+export function listBlogPosts() {
+  return getJSON<{ posts: BlogPostMeta[] }>("/blog");
+}
+
+export function getBlogPost(slug: string) {
+  return getJSON<{ post: BlogPost }>(`/blog/${slug}`);
+}
+
 async function postJSON<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
     method: "POST",

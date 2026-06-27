@@ -1,6 +1,8 @@
 import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import Explore from "./pages/Explore";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import AppShell from "./components/AppShell";
 import Cook from "./pages/Cook";
 import Plan from "./pages/Plan";
@@ -22,6 +24,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Explore />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
         <Route
           path="/open-ui"
           element={

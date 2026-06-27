@@ -6,6 +6,7 @@ import { dirname, join } from "path";
 import { chatJSON, streamText } from "./ai.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM, NUTRITION_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
+import { listPosts, getPost } from "./blog.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
@@ -17,6 +18,17 @@ app.use(express.json({ limit: "15mb" }));
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+app.get("/api/blog", (_req, res) => {
+  const posts = listPosts().map(({ bodyMarkdown, ...meta }) => meta);
+  res.json({ posts });
+});
+
+app.get("/api/blog/:slug", (req, res) => {
+  const post = getPost(req.params.slug);
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  res.json({ post });
+});
 
 app.post("/api/recipe", async (req, res) => {
   try {

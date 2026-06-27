@@ -1,11 +1,16 @@
-// GiantBiteAI content engine — drafts one blog article + platform-adapted social posts per run.
-// DRAFT ONLY: writes markdown to marketing/drafts/, never posts anywhere on its own.
+// GiantBiteAI content engine — drafts one blog article + platform-adapted social posts per run,
+// and AUTO-PUBLISHES the article to GiantBiteAI's own /blog (server/blog-posts.json).
+// Social/Reddit/ad-plan sections remain DRAFT ONLY (markdown in marketing/drafts/) — those still
+// require manual review/posting. The on-site blog post is the one piece of content Ken has
+// explicitly authorized for autonomous daily publishing (2026-06-27), since it's first-party
+// content on GiantBiteAI's own domain, not a third-party platform post or paid ad spend.
 // Run daily via the OS scheduler or Claude Code's `schedule` skill: `node marketing/openclaw.mjs`
 import "dotenv/config";
 import { writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { chatJSON } from "../server/ai.mjs";
+import { publishPost } from "../server/blog.mjs";
 import { pickTodaysPillar, seasonalHint } from "./topics.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -179,9 +184,10 @@ async function main() {
   const adPlan = await withRetry(() => generateAdPlan(article, pillar));
   console.log("[openclaw] Paid ad test plan drafted");
   const path = saveDraft(date, pillar, article, social, adPlan);
+  console.log(`[openclaw] Full draft (social + ad plan) saved to ${path} — still review before posting/spending anywhere off-site.`);
 
-  console.log(`[openclaw] Draft saved to ${path}`);
-  console.log("[openclaw] DRAFT ONLY — review and post manually, and no ad spend has been made. Nothing was published or paid for.");
+  const post = publishPost({ title: article.title, metaDescription: article.metaDescription, bodyMarkdown: article.bodyMarkdown, date: date.toISOString().slice(0, 10) });
+  console.log(`[openclaw] Article auto-published live to GiantBiteAI's own /blog/${post.slug}`);
 }
 
 main().catch((err) => {

@@ -10,6 +10,7 @@ export default function SiteHeader() {
           <a href="#tools" className="hover:text-white">Tools</a>
           <a href="#compare" className="hover:text-white">Pricing</a>
           <a href="#how" className="hover:text-white">How it Works</a>
+          <Link to="/blog" className="hover:text-white">Blog</Link>
           <a href="#faq" className="hover:text-white">FAQ</a>
         </nav>
         <Link
