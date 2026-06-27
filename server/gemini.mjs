@@ -32,13 +32,15 @@ function stripFence(text) {
   return fenced ? fenced[1].trim() : text.trim();
 }
 
-// Gemini occasionally returns literal newlines/tabs inside JSON string values instead of
-// escaping them, which breaks JSON.parse. Escape control characters found inside strings only.
+// Gemini occasionally returns malformed JSON: literal newlines/tabs inside string values
+// instead of \n/\t, and literal unescaped " characters inside string content (e.g. quoting
+// a word) instead of \". Both break JSON.parse. Repair both cases before parsing.
 function safeJsonParse(text) {
   let inString = false;
   let escaped = false;
   let out = "";
-  for (const ch of text) {
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     if (inString) {
       if (escaped) {
         out += ch;
@@ -47,8 +49,19 @@ function safeJsonParse(text) {
         out += ch;
         escaped = true;
       } else if (ch === '"') {
-        out += ch;
-        inString = false;
+        // Decide if this quote really ends the string: a real closing quote is followed
+        // (after whitespace) by a JSON structural character. Otherwise it's a literal
+        // quote embedded in the text — escape it instead of ending the string.
+        let j = i + 1;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        const next = text[j];
+        const isRealClose = next === undefined || ",}]:".includes(next);
+        if (isRealClose) {
+          out += ch;
+          inString = false;
+        } else {
+          out += '\\"';
+        }
       } else if (ch === "\n") {
         out += "\\n";
       } else if (ch === "\r") {
