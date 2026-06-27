@@ -5,7 +5,7 @@ import FeatureCarousel from "../components/FeatureCarousel";
 import SlideOutPanel from "../components/SlideOutPanel";
 import { canUseCoach, getState, registerReferral } from "../lib/storage";
 
-const FOOD_PHOTO = "https://images.unsplash.com/photo-1518737003272-dac7c4760d5e?auto=format&fit=crop&w=1600&q=80";
+const FOOD_PHOTO = "https://images.unsplash.com/photo-1663530761401-15eefb544889?auto=format&fit=crop&w=1600&q=80";
 
 function DemoImage() {
   return (
