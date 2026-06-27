@@ -140,7 +140,18 @@ export default function Cook() {
             <p className="text-sm text-gray-400">Type what you have, or snap your fridge/pantry.</p>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-300">Ingredients</label>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="block text-sm font-semibold text-gray-300">Ingredients</label>
+                {state.pantryItems.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setIngredientsText(state.pantryItems.map((i) => i.name).join(", "))}
+                    className="text-xs text-ember-400 hover:underline"
+                  >
+                    🧺 Use my pantry
+                  </button>
+                )}
+              </div>
               <textarea
                 value={ingredientsText}
                 onChange={(e) => setIngredientsText(e.target.value)}

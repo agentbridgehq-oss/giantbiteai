@@ -69,6 +69,8 @@ export default function Pricing() {
             <li>✓ Unlimited recipes</li>
             <li>✓ Unlimited meal plans</li>
             <li>✓ Unlimited AI Cooking Coach</li>
+            <li>✓ Unlimited Drink Pairing</li>
+            <li>✓ Full GiantBiteAI Academy guides</li>
             <li>✓ Everything in Free</li>
           </ul>
           {state.isPro ? (

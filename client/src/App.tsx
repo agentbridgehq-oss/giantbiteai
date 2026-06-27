@@ -6,6 +6,10 @@ import Plan from "./pages/Plan";
 import Coach from "./pages/Coach";
 import Dashboard from "./pages/Dashboard";
 import Pricing from "./pages/Pricing";
+import Pantry from "./pages/Pantry";
+import Tools from "./pages/Tools";
+import Pairing from "./pages/Pairing";
+import Academy from "./pages/Academy";
 import NotFound from "./pages/NotFound";
 import ToastHost from "./components/ToastHost";
 
@@ -18,6 +22,10 @@ export default function App() {
           <Route path="/cook" element={<Cook />} />
           <Route path="/plan" element={<Plan />} />
           <Route path="/coach" element={<Coach />} />
+          <Route path="/pantry" element={<Pantry />} />
+          <Route path="/tools" element={<Tools />} />
+          <Route path="/pairing" element={<Pairing />} />
+          <Route path="/academy" element={<Academy />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pricing" element={<Pricing />} />
         </Route>

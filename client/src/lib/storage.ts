@@ -10,7 +10,8 @@ export type Badge =
   | "streak_7"
   | "streak_30"
   | "inviter_1"
-  | "inviter_3";
+  | "inviter_3"
+  | "pantry_started";
 
 export const BADGE_META: Record<Badge, { label: string; emoji: string }> = {
   first_recipe: { label: "First Recipe", emoji: "🍳" },
@@ -22,7 +23,14 @@ export const BADGE_META: Record<Badge, { label: string; emoji: string }> = {
   streak_30: { label: "Forged in Flame", emoji: "🔥" },
   inviter_1: { label: "Brought a Friend", emoji: "🤝" },
   inviter_3: { label: "Kitchen Crew", emoji: "👥" },
+  pantry_started: { label: "Pantry Stocked", emoji: "🧺" },
 };
+
+export interface PantryItem {
+  name: string;
+  addedAt: string;
+  expiresAt: string | null;
+}
 
 interface StateShape {
   streak: number;
@@ -44,14 +52,15 @@ interface StateShape {
   plansThisWeek: number;
   freeCoachMessagesUsed: number;
   savedRecipes: Recipe[];
+  pantryItems: PantryItem[];
 }
 
 export const FREE_COACH_MESSAGES = 2;
 
 export const FREE_RECIPES_PER_DAY = 3;
 export const FREE_PLANS_PER_WEEK = 1;
-export const PRO_PRICE_MONTHLY = 4.99;
-export const PRO_PRICE_YEARLY = 39;
+export const PRO_PRICE_MONTHLY = 5.99;
+export const PRO_PRICE_YEARLY = 40;
 
 const TASTE_KEYWORDS = [
   "italian", "mexican", "asian", "chinese", "japanese", "thai", "indian", "mediterranean", "greek", "french",
@@ -95,6 +104,7 @@ function defaultState(): StateShape {
     plansThisWeek: 0,
     freeCoachMessagesUsed: 0,
     savedRecipes: [],
+    pantryItems: [],
   };
 }
 
@@ -170,6 +180,21 @@ export function toggleSavedRecipe(recipe: Recipe): boolean {
     : [recipe, ...state.savedRecipes];
   saveState(state);
   return !exists;
+}
+
+export function addPantryItem(name: string, expiresAt: string | null) {
+  const state = getState();
+  state.pantryItems = [{ name, addedAt: todayStr(), expiresAt }, ...state.pantryItems];
+  awardBadge(state, "pantry_started", true);
+  saveState(state);
+  return state;
+}
+
+export function removePantryItem(name: string) {
+  const state = getState();
+  state.pantryItems = state.pantryItems.filter((i) => i.name !== name);
+  saveState(state);
+  return state;
 }
 
 export function setPro(value: boolean) {

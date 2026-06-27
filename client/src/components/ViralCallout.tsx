@@ -17,7 +17,7 @@ export default function ViralCallout() {
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {ITEMS.map((it) => (
-            <div key={it.title} className="flex gap-4 rounded-2xl border border-char-800 bg-char-900 p-5">
+            <div key={it.title} className="flex gap-4 rounded-2xl bg-char-900/40 p-5">
               <span className="text-2xl">{it.emoji}</span>
               <div>
                 <h3 className="font-bold text-white">{it.title}</h3>

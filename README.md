@@ -17,17 +17,22 @@ GiantBiteAI's free tier is more generous than any competitor's (3 recipes/day + 
 
 ## Pricing model
 
-Freemium — confirmed 2026-06-26:
+Freemium — confirmed 2026-06-26, prices bumped +$1 2026-06-27:
 - **Free:** 3 recipes/day, 1 meal plan/week, 2 lifetime free Coach messages (a taste of the differentiator).
-- **Pro ($4.99/mo or $39/yr):** unlimited recipes/plans, full AI Cooking Coach access.
+- **Pro ($5.99/mo or $40/yr):** unlimited recipes/plans, full AI Cooking Coach, unlimited Drink Pairing, full Academy guides.
 - Payment processing (Stripe) is not yet wired — `/pricing` currently unlocks Pro client-side as a "free while billing isn't live yet" gesture. See `client/src/pages/Pricing.tsx`.
 
 ## Features
 
-- **Recipe Generator** — text or photo input, leftovers-rescue mode, dietary + calorie targeting, taste-preference personalization.
+- **Recipe Generator** — text or photo input, leftovers-rescue mode, dietary + calorie targeting, taste-preference personalization, pulls straight from My Pantry.
 - **Recipe Importer** — paste a URL or raw text, AI strips ads/junk and returns a clean structured recipe.
 - **Meal Planner** — multi-day plan + a shopping list that reuses ingredients across days to cut waste.
-- **AI Cooking Coach** — streaming chat for substitutions, timing, technique, food-safety temps, while you're mid-recipe. Pro-gated after 2 free messages.
+- **AI Cooking Coach** — streaming chat for substitutions, timing, technique, food-safety temps, while you're mid-recipe. Pro-gated after 2 free messages. Voice in and voice out.
+- **My Pantry** — persistent pantry/fridge list with expiry tracking, feeds directly into the Recipe Generator.
+- **Kitchen Tools** — instant unit converter + recipe scaler, no AI call, no quota used.
+- **Drink Pairing** — wine/beer/cocktail/non-alcoholic suggestions for any dish.
+- **GiantBiteAI Academy** — real technique/nutrition guides (knife skills, flavor pillars, macros, budget eating); previews free, full lessons are a Pro perk.
+- **My Recipes** — save/unsave any generated recipe, browse your collection on the Dashboard.
 - **Hands-Free Mode** — text-to-speech step walkthrough with optional voice commands ("next", "back", "repeat") on every recipe.
 - **Growth loop** — daily streaks, badges, a running "money saved / meals rescued" counter, shareable stats cards, and a referral link. All client-side (localStorage), no account required.
 

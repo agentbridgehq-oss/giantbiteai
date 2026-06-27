@@ -75,6 +75,17 @@ export async function verifyCheckout(sessionId: string) {
   return res.json() as Promise<{ paid: boolean }>;
 }
 
+export interface PairingResponse {
+  wine: { suggestion: string; why: string };
+  beer: { suggestion: string; why: string };
+  cocktail: { suggestion: string; why: string };
+  nonAlcoholic: { suggestion: string; why: string };
+}
+
+export function generatePairing(dish: string) {
+  return postJSON<PairingResponse>("/pairing", { dish });
+}
+
 export function generateMealPlan(input: {
   days: number;
   dietary?: string;

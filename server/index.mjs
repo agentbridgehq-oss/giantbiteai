@@ -4,7 +4,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { chatJSON, streamText } from "./gemini.mjs";
-import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM } from "./prompts.mjs";
+import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -126,6 +126,21 @@ app.post("/api/coach", async (req, res) => {
     }
     res.write("data: [DONE]\n\n");
     res.end();
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/pairing", async (req, res) => {
+  try {
+    const { dish = "" } = req.body;
+    if (!dish.trim()) throw Object.assign(new Error("Tell me what you're serving."), { status: 400 });
+    const messages = [
+      { role: "system", content: PAIRING_SYSTEM },
+      { role: "user", content: `Dish: ${dish}` },
+    ];
+    const result = await chatJSON({ model: MODEL, messages });
+    res.json(result);
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
   }
