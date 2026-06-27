@@ -35,7 +35,7 @@ This is a script, not a service — nothing here keeps running in the background
 - Windows Task Scheduler, or
 - any cron-like tool you point at this repo.
 
-Needs the same `GEMINI_API_KEY` as the app (`.env` at the repo root).
+Needs the same `OPENROUTER_API_KEY` as the app (`.env` at the repo root).
 
 ## Never mention the AI provider
 

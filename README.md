@@ -4,7 +4,7 @@
 
 Three AI cooking tools — Recipe Generator, Meal Planner, and AI Cooking Coach — with a generous free tier and a Pro subscription for unlimited use.
 
-> **Internal note (not for public copy):** the backend runs on Google Gemini (`server/gemini.mjs`, multimodal — handles both text and photo input in one model). Per Ken's instruction, never name or imply the AI provider/model in any public-facing copy (site, marketing, FAQ) unless legally required — this file is internal engineering documentation, not site content.
+> **Internal note (not for public copy):** the backend runs on DeepSeek-R1 (text/reasoning) + Qwen-VL (vision, photo ingredient ID) via OpenRouter (`server/openrouter.mjs`). Per Ken's instruction, never name or imply the AI provider/model in any public-facing copy (site, marketing, FAQ) unless legally required — this file is internal engineering documentation, not site content.
 
 ## Why this exists (positioning)
 
@@ -34,20 +34,20 @@ Freemium — confirmed 2026-06-26:
 ## Stack
 
 - `client/` — Vite + React + TypeScript + Tailwind, single-page app with React Router.
-- `server/` — Express, proxies Gemini (keeps your API key off the client).
+- `server/` — Express, proxies OpenRouter (keeps your API key off the client).
 - No database — growth/streak state and Pro status live in the browser's `localStorage` by design (zero signup friction; also means clearing browser storage resets Pro status until real accounts/payments exist).
 
 ## Setup
 
 ```bash
 npm run install:all
-cp .env.example .env   # then add your GEMINI_API_KEY (https://aistudio.google.com/apikey)
+cp .env.example .env   # then add your OPENROUTER_API_KEY (https://openrouter.ai/keys)
 npm run dev             # server on :8787, client on :5173 (proxies /api to the server)
 ```
 
 ## Deployment
 
-Live on Railway (project `giantbiteai`, org `agentbridgehq-oss`). `railway.toml` builds with Nixpacks (`npm run install:all && npm run build`) and starts via `npm start`, which serves the built client (`client/dist`) and the API from one Express process. Add `GEMINI_API_KEY` in the Railway service's Variables tab to make AI calls actually work in production.
+Live on Railway (project `giantbiteai`, org `agentbridgehq-oss`). `railway.toml` builds with Nixpacks (`npm run install:all && npm run build`) and starts via `npm start`, which serves the built client (`client/dist`) and the API from one Express process. Needs `OPENROUTER_API_KEY` in the Railway service's Variables tab — the server also accepts `DEEPSEEK_API_KEY` as a fallback name for the same OpenRouter key, since that's how it's currently named there.
 
 ## Marketing pipeline
 

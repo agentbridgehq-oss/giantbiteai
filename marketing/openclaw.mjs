@@ -5,11 +5,11 @@ import "dotenv/config";
 import { writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { chatJSON } from "../server/gemini.mjs";
+import { chatJSON } from "../server/openrouter.mjs";
 import { pickTodaysPillar, seasonalHint } from "./topics.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = process.env.TEXT_MODEL || "deepseek/deepseek-r1";
 
 const ARTICLE_SYSTEM = `You are the content writer for GiantBiteAI, an AI cooking app (Recipe Generator, Meal Planner, AI Cooking Coach) with a generous free tier.
 Write a genuinely useful, specific blog post a real home cook would bookmark — not generic AI filler. Include real technique detail, not just "cook until done."
