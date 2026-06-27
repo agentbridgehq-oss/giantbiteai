@@ -86,8 +86,13 @@ export default function Landing() {
       <section
         className="relative overflow-hidden px-4 pb-20 pt-10 text-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(10,10,13,0.78), rgba(10,10,13,0.92)), url(${FOOD_PHOTO})`,
-          backgroundSize: "cover",
+          backgroundImage: `
+            radial-gradient(ellipse 380px 280px at 30% 0%, rgba(255,170,90,0.32) 0%, rgba(255,170,90,0) 70%),
+            radial-gradient(ellipse 380px 280px at 70% 0%, rgba(255,170,90,0.32) 0%, rgba(255,170,90,0) 70%),
+            linear-gradient(rgba(10,10,13,0.8), rgba(10,10,13,0.94)),
+            url(${FOOD_PHOTO})
+          `,
+          backgroundSize: "100% 100%, 100% 100%, 100% 100%, cover",
           backgroundPosition: "center",
         }}
       >
