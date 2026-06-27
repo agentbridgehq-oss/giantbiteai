@@ -7,7 +7,7 @@ export default function WeeklyArticle() {
 
   return (
     <section className="px-4 py-16">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-char-800 bg-char-900 p-8 sm:p-10">
+      <div className="mx-auto max-w-3xl">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ember-400">
           <span>{a.week}</span>
           <span className="text-gray-600">·</span>

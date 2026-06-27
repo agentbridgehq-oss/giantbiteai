@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import Hero from "../components/Hero";
+import HomeChat from "../components/HomeChat";
 import ToolsGrid from "../components/ToolsGrid";
 import WeeklyArticle from "../components/WeeklyArticle";
 import CompareTable from "../components/CompareTable";
@@ -32,6 +33,7 @@ export default function Landing() {
       )}
       <SiteHeader />
       <Hero />
+      <HomeChat />
       <ToolsGrid />
       <WeeklyArticle />
       <CompareTable />
