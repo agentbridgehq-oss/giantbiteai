@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Explore from "./pages/Explore";
@@ -14,12 +15,22 @@ import Academy from "./pages/Academy";
 import NotFound from "./pages/NotFound";
 import ToastHost from "./components/ToastHost";
 
+const OpenDashboard = lazy(() => import("./pages/OpenDashboard"));
+
 export default function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/explore" element={<Explore />} />
+        <Route
+          path="/open-ui"
+          element={
+            <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a]" />}>
+              <OpenDashboard />
+            </Suspense>
+          }
+        />
         <Route element={<AppShell />}>
           <Route path="/cook" element={<Cook />} />
           <Route path="/plan" element={<Plan />} />
