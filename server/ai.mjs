@@ -12,11 +12,11 @@ export async function chatJSON({ messages, temperature }) {
   }
 }
 
-export async function streamText({ messages, temperature }) {
+export async function streamText({ messages, temperature, search }) {
   try {
-    return await gemini.streamText({ model: MODEL, messages, temperature });
+    return await gemini.streamText({ model: MODEL, messages, temperature, search });
   } catch (err) {
-    console.error("Gemini streamText failed, falling back to OpenRouter:", err.message);
+    console.error("Gemini streamText failed, falling back to OpenRouter (no live search support):", err.message);
     return await openrouter.streamText({ messages, temperature });
   }
 }

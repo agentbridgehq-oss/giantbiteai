@@ -91,12 +91,13 @@ export async function chatJSON({ model, messages, temperature = 0.7 }) {
   return safeJsonParse(stripFence(text));
 }
 
-export async function streamText({ model, messages, temperature = 0.6 }) {
+export async function streamText({ model, messages, temperature = 0.6, search = false }) {
   const { systemInstruction, contents } = splitMessages(messages);
   const res = await callGemini(`${model}:streamGenerateContent?alt=sse`, {
     contents,
     systemInstruction,
     generationConfig: { temperature },
+    ...(search ? { tools: [{ google_search: {} }] } : {}),
   });
 
   return (async function* () {

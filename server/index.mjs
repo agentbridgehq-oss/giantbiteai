@@ -124,6 +124,7 @@ app.post("/api/coach", async (req, res) => {
     const upstream = await streamText({
       model: MODEL,
       messages: [{ role: "system", content: COACH_SYSTEM }, ...messages],
+      search: true,
     });
 
     res.setHeader("Content-Type", "text/event-stream");
