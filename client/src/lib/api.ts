@@ -86,6 +86,16 @@ export function generatePairing(dish: string) {
   return postJSON<PairingResponse>("/pairing", { dish });
 }
 
+export interface NutritionResponse {
+  matchedFood: string;
+  isEstimate: boolean;
+  per100g: { calories: number; proteinG: number; carbsG: number; fatG: number };
+}
+
+export function lookupNutrition(food: string, brand?: string) {
+  return postJSON<NutritionResponse>("/nutrition", { food, brand });
+}
+
 export function generateMealPlan(input: {
   days: number;
   dietary?: string;

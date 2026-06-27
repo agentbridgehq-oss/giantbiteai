@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useGbaState } from "../lib/storage";
-import type { Recipe } from "../lib/api";
+import { lookupNutrition, type NutritionResponse, type Recipe } from "../lib/api";
 
 const VOLUME_TO_ML: Record<string, number> = {
   tsp: 4.92892,
@@ -194,6 +194,103 @@ function RecipeScaler({ savedRecipes }: { savedRecipes: Recipe[] }) {
   );
 }
 
+function NutritionLookup() {
+  const [food, setFood] = useState("");
+  const [brand, setBrand] = useState("");
+  const [grams, setGrams] = useState("100");
+  const [result, setResult] = useState<NutritionResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const scale = (Number(grams) || 0) / 100;
+
+  async function handleLookup(e: React.FormEvent) {
+    e.preventDefault();
+    if (!food.trim()) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const res = await lookupNutrition(food.trim(), brand.trim() || undefined);
+      setResult(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't look that up.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
+      <h2 className="font-display text-lg font-bold text-white">Nutrition Lookup</h2>
+      <p className="mt-1 text-sm text-gray-400">
+        Calories, protein, carbs, and fat per 100g for any food — AI-estimated, scaled to whatever amount you're actually eating.
+      </p>
+      <form onSubmit={handleLookup} className="mt-4 space-y-3">
+        <input
+          value={food}
+          onChange={(e) => setFood(e.target.value)}
+          placeholder="e.g. cheddar cheese, chicken breast, oat milk"
+          className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+        />
+        <input
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder="Brand / label (optional) — e.g. Kraft, Oatly"
+          className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+        />
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            value={grams}
+            onChange={(e) => setGrams(e.target.value)}
+            className="w-24 rounded-xl border border-char-700 bg-char-950 px-3 py-2 text-sm text-white outline-none focus:border-ember-500"
+          />
+          <span className="text-sm text-gray-400">grams</span>
+        </div>
+        <button
+          type="submit"
+          disabled={loading || !food.trim()}
+          className="btn-ember w-full rounded-full py-2.5 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
+        >
+          {loading ? "Looking up..." : "Look up nutrition"}
+        </button>
+      </form>
+      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      {result && (
+        <div className="mt-5 rounded-xl border border-char-800 bg-char-950 p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white">{result.matchedFood}</h3>
+            <span className="text-xs text-gray-500">{result.isEstimate ? "Estimate" : "Label value"}</span>
+          </div>
+          <p className="mt-1 text-xs text-gray-500">For {grams || 0}g</p>
+          <div className="mt-3 grid grid-cols-4 gap-3 text-center">
+            <NutrientStat label="Calories" value={Math.round(result.per100g.calories * scale)} />
+            <NutrientStat label="Protein" value={`${Math.round(result.per100g.proteinG * scale)}g`} />
+            <NutrientStat label="Carbs" value={`${Math.round(result.per100g.carbsG * scale)}g`} />
+            <NutrientStat label="Fat" value={`${Math.round(result.per100g.fatG * scale)}g`} />
+          </div>
+          <p className="mt-3 text-xs text-gray-500">
+            {result.isEstimate
+              ? "AI estimate based on typical values — not a verified nutrition label."
+              : "Based on this brand's typical published nutrition label."}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NutrientStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div>
+      <div className="text-lg font-bold text-ember-400">{value}</div>
+      <div className="text-xs text-gray-500">{label}</div>
+    </div>
+  );
+}
+
 export default function Tools() {
   const state = useGbaState();
 
@@ -201,10 +298,11 @@ export default function Tools() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold text-white">Kitchen Tools</h1>
-        <p className="mt-1 text-sm text-gray-400">Quick utilities — instant, no quota used.</p>
+        <p className="mt-1 text-sm text-gray-400">Quick utilities — most are instant, no quota used.</p>
       </div>
       <UnitConverter />
       <RecipeScaler savedRecipes={state.savedRecipes} />
+      <NutritionLookup />
     </div>
   );
 }

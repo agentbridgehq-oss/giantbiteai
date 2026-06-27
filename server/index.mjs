@@ -4,7 +4,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { chatJSON, streamText } from "./ai.mjs";
-import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM } from "./prompts.mjs";
+import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM, NUTRITION_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -148,6 +148,21 @@ app.post("/api/pairing", async (req, res) => {
     const messages = [
       { role: "system", content: PAIRING_SYSTEM },
       { role: "user", content: `Dish: ${dish}` },
+    ];
+    const result = await chatJSON({ model: MODEL, messages });
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post("/api/nutrition", async (req, res) => {
+  try {
+    const { food = "", brand = "" } = req.body;
+    if (!food.trim()) throw Object.assign(new Error("Tell me what food you want to look up."), { status: 400 });
+    const messages = [
+      { role: "system", content: NUTRITION_SYSTEM },
+      { role: "user", content: `Food: ${food}${brand.trim() ? `\nBrand/product: ${brand.trim()}` : ""}` },
     ];
     const result = await chatJSON({ model: MODEL, messages });
     res.json(result);
