@@ -13,6 +13,7 @@ import {
 } from "../lib/storage";
 import { showToast } from "../lib/toast";
 import RecipeCard from "../components/RecipeCard";
+import FeatureGrid from "../components/FeatureGrid";
 
 const ALL_BADGES = Object.keys(BADGE_META) as Badge[];
 
@@ -65,6 +66,8 @@ export default function Dashboard() {
         </div>
         <p className="text-sm text-gray-400">Everything below lives only in this browser — no account needed.</p>
       </div>
+
+      <FeatureGrid />
 
       <div className="rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-6">
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">

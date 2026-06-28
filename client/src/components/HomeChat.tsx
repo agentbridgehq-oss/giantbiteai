@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 import { streamCoach } from "../lib/api";
 import { canUseCoach, consumeCoachMessage, getState } from "../lib/storage";
 
@@ -34,33 +35,31 @@ export default function HomeChat() {
   }
 
   return (
-    <section className="px-4 py-14">
-      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">Ask the AI Chef Guide anything</h2>
-        <p className="mt-2 text-sm text-gray-400">No sign-up needed for your first couple of questions.</p>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            ask(question);
-          }}
-          className="mt-6 flex gap-2"
+    <div className="w-full">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          ask(question);
+        }}
+        className="flex items-end gap-1.5 rounded-lg border border-char-700 bg-char-900 px-3 py-2 transition focus-within:border-ember-500"
+      >
+        <input
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask the AI Chef Guide anything..."
+          className="flex-1 bg-transparent py-1 text-sm text-white placeholder-gray-500 outline-none"
+        />
+        <button
+          type="submit"
+          disabled={loading || !question.trim()}
+          aria-label="Ask"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-ember-500 text-white transition hover:brightness-110 disabled:opacity-30"
         >
-          <input
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask a cooking question..."
-            className="flex-1 rounded-full border border-char-700 bg-char-900 px-5 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
-          />
-          <button
-            type="submit"
-            disabled={loading || !question.trim()}
-            className="btn-ember shrink-0 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
-          >
-            {loading ? "Thinking…" : "Ask"}
-          </button>
-        </form>
+          {loading ? <span className="h-3 w-3 animate-pulse rounded-full bg-white" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.5} />}
+        </button>
+      </form>
 
+      {!answer && !blocked && (
         <div className="mt-3 flex flex-wrap justify-center gap-2">
           {SUGGESTIONS.map((s) => (
             <button
@@ -76,21 +75,22 @@ export default function HomeChat() {
             </button>
           ))}
         </div>
+      )}
 
-        {answer && (
-          <p className="mt-6 text-left text-base leading-relaxed text-gray-200">{answer}</p>
-        )}
-
-        {blocked && (
-          <p className="mt-6 text-sm text-gray-400">
-            You've used your free questions here —{" "}
-            <Link to="/cook" className="text-ember-400 hover:underline">
-              start cooking free
-            </Link>{" "}
-            to keep chatting with the full AI Coach.
-          </p>
-        )}
-      </div>
-    </section>
+      {(answer || blocked) && (
+        <div className="mt-3 max-h-40 overflow-y-auto rounded-xl border border-char-800 bg-char-950 p-3 text-left text-sm text-gray-200">
+          {answer}
+          {blocked && (
+            <p className="text-gray-400">
+              You've used your free questions here —{" "}
+              <Link to="/cook" className="text-ember-400 hover:underline">
+                start cooking free
+              </Link>{" "}
+              to keep chatting with the full AI Coach.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

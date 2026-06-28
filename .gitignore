@@ -5,3 +5,5 @@ dist/
 .DS_Store
 *.tsbuildinfo
 marketing/drafts/*.md
+dev-out.log
+dev-err.log
