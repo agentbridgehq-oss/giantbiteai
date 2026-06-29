@@ -13,6 +13,8 @@ import Pantry from "./pages/Pantry";
 import Tools from "./pages/Tools";
 import Pairing from "./pages/Pairing";
 import Academy from "./pages/Academy";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import ToastHost from "./components/ToastHost";
 
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route
           path="/open-ui"
           element={

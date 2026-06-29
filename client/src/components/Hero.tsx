@@ -12,7 +12,7 @@ export default function Hero() {
             Recipe Generator &middot; Meal Planner &middot; AI Coach
           </div>
 
-          <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
+          <h1 className="font-display text-5xl font-bold leading-tight text-white sm:text-6xl">
             The Future of
             <br />
             <span className="text-ember-gradient">Cooking is AI.</span>

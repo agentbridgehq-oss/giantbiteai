@@ -10,6 +10,7 @@ export default function Pricing() {
   const state = useGbaState();
   const [params, setParams] = useSearchParams();
   const [loading, setLoading] = useState<"regular" | "pro" | null>(null);
+  const [agreed, setAgreed] = useState(false);
 
   useEffect(() => {
     const sessionId = params.get("session_id");
@@ -32,6 +33,10 @@ export default function Pricing() {
   }, [params, setParams]);
 
   async function upgrade(plan: "regular" | "pro") {
+    if (!agreed) {
+      showToast("Please agree to the Terms of Service and Privacy Policy first.");
+      return;
+    }
     setLoading(plan);
     localStorage.setItem(PENDING_PLAN_KEY, plan);
     try {
@@ -54,7 +59,24 @@ export default function Pricing() {
         </p>
       </div>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-3">
+      <label className="mt-8 flex items-start gap-3 rounded-xl border border-char-800 bg-char-900/60 p-4 text-sm text-gray-300">
+        <input
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-char-700 bg-char-900 text-ember-500 focus:ring-ember-500"
+        />
+        <span>
+          I agree to the{" "}
+          <Link to="/terms" target="_blank" className="text-ember-400 hover:underline">Terms of Service</Link>{" "}
+          and{" "}
+          <Link to="/privacy" target="_blank" className="text-ember-400 hover:underline">Privacy Policy</Link>,
+          including the food-safety disclaimer (AI-generated recipes/nutrition may contain errors —
+          always check ingredients against your own allergies and dietary needs).
+        </span>
+      </label>
+
+      <div className="mt-6 grid gap-6 sm:grid-cols-3">
         <div className="rounded-2xl border border-char-800 bg-char-900 p-7">
           <h2 className="text-lg font-bold text-white">Free</h2>
           <p className="mt-1 text-3xl font-bold text-white">$0</p>
@@ -95,7 +117,7 @@ export default function Pricing() {
             <button
               type="button"
               onClick={() => upgrade("regular")}
-              disabled={loading !== null}
+              disabled={loading !== null || !agreed}
               className="mt-6 w-full rounded-full border border-char-700 py-3 text-sm font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white disabled:opacity-60"
             >
               {loading === "regular" ? "Redirecting…" : `Upgrade — $${REGULAR_PRICE_MONTHLY}/mo`}
@@ -128,7 +150,7 @@ export default function Pricing() {
             <button
               type="button"
               onClick={() => upgrade("pro")}
-              disabled={loading !== null}
+              disabled={loading !== null || !agreed}
               className="btn-ember mt-6 w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-60"
             >
               {loading === "pro" ? "Redirecting…" : `Upgrade — $${PRO_PRICE_MONTHLY}/mo`}
