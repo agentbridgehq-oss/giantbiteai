@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import HomeChat from "./HomeChat";
-import PhoneMockup from "./PhoneMockup";
 
 export default function Hero() {
   return (
@@ -51,7 +50,24 @@ export default function Hero() {
           </div>
         </div>
 
-        <PhoneMockup />
+        <div className="relative hidden md:block">
+          <div className="absolute -inset-6 rounded-[2rem] bg-ember-500/15 blur-3xl" aria-hidden />
+          <img
+            src="/hero-dish.webp"
+            alt="Seared salmon in a cast-iron skillet, cooked with GiantBiteAI"
+            className="relative w-full rounded-[2rem] border border-char-700 object-cover shadow-glow"
+            loading="eager"
+          />
+        </div>
+      </div>
+
+      <div className="mx-auto mt-16 max-w-6xl overflow-hidden rounded-3xl border border-char-800">
+        <img
+          src="/ingredients-banner.webp"
+          alt="Fresh ingredients on a dark counter"
+          className="h-40 w-full object-cover sm:h-56"
+          loading="lazy"
+        />
       </div>
 
       <a href="#tools" className="mx-auto mt-14 block w-fit text-gray-500 transition hover:text-gray-300" aria-label="Scroll down">

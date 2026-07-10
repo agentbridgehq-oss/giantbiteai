@@ -1,6 +1,6 @@
 ---
 name: stripe-pricing-check
-description: Verify GiantBiteAI's Stripe checkout is wired correctly for both pricing plans (Regular $5.99/mo, Pro $12.99/mo) without spending real money. Use before/after any pricing or Stripe-related deploy.
+description: Verify GiantBiteAI's Stripe checkout is wired correctly for both pricing plans (Regular $12.99/mo, Pro $19.99/mo) without spending real money. Use before/after any pricing or Stripe-related deploy.
 ---
 
 # Stripe pricing sanity check

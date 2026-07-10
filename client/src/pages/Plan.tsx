@@ -172,6 +172,15 @@ export default function Plan() {
                   </div>
                 ))}
               </div>
+              <a
+                href="https://www.instacart.com/store/s?k=groceries"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ember mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+              >
+                🛒 Shop this list on Instacart
+              </a>
+              <p className="mt-2 text-xs text-gray-500">Opens Instacart — add your items and check out there.</p>
             </div>
 
             {result.wasteReductionNotes.length > 0 && (

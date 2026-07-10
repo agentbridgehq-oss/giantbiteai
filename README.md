@@ -17,10 +17,11 @@ GiantBiteAI's free tier is more generous than any competitor's (3 recipes/day + 
 
 ## Pricing model
 
-Freemium — confirmed 2026-06-26, prices bumped +$1 2026-06-27:
+Freemium, 3 tiers — prices updated 2026-07-08:
 - **Free:** 3 recipes/day, 1 meal plan/week, 2 lifetime free Coach messages (a taste of the differentiator).
-- **Pro ($5.99/mo or $40/yr):** unlimited recipes/plans, full AI Cooking Coach, unlimited Drink Pairing, full Academy guides.
-- Payment processing (Stripe) is not yet wired — `/pricing` currently unlocks Pro client-side as a "free while billing isn't live yet" gesture. See `client/src/pages/Pricing.tsx`.
+- **Regular ($12.99/mo):** unlimited recipes/plans, Drink Pairing, Recipe Importer, My Pantry, Kitchen Tools.
+- **Pro ($19.99/mo):** everything in Regular, plus the full AI Cooking Coach (incl. Hands-Free Voice Mode) and the complete Academy.
+- Payment processing is via Stripe (`server/stripe.mjs`, `STRIPE_PRICE_ID_REGULAR` / `STRIPE_PRICE_ID_PRO` env vars). If Stripe checkout fails to initialize, `/pricing` falls back to unlocking the tier client-side as a "free while billing isn't live" gesture. See `client/src/pages/Pricing.tsx`.
 
 ## Features
 

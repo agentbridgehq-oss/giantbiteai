@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import Logo from "./Logo";
+import SideChat from "./SideChat";
 import StreakPill from "./StreakPill";
 import { useGbaState } from "../lib/storage";
 
@@ -97,6 +98,7 @@ export default function AppShell() {
       <main className="mx-auto max-w-6xl px-4 py-8">
         <Outlet />
       </main>
+      <SideChat />
     </div>
   );
 }

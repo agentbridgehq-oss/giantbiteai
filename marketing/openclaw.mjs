@@ -171,23 +171,52 @@ async function withRetry(fn, attempts = 2) {
   throw lastErr;
 }
 
+// Cross-promo footer — Ken's directive (2026-07-09): every article across all
+// three sites carries a claudecraft.ca link to funnel traffic there. Appended
+// deterministically (not left to the model) as a clearly-separated footer so
+// the cooking content itself stays on-topic.
+const CROSS_PROMO_FOOTER =
+  "\n\n---\n\n*From the team behind GiantBiteAI: want to get more out of AI beyond the kitchen? " +
+  "[ClaudeCraft](https://claudecraft.ca) sells done-for-you Claude AI skill bundles for work, content, and everyday life.*";
+
 async function main() {
   const date = new Date();
-  const pillar = pickTodaysPillar(date);
   const hint = seasonalHint(date);
 
-  console.log(`[openclaw] Today's pillar: ${pillar.id} — ${pillar.angle}`);
-  const article = await withRetry(() => generateArticle(pillar, hint));
-  console.log(`[openclaw] Article drafted: "${article.title}"`);
-  const social = await withRetry(() => generateSocialAdaptations(article, pillar));
-  console.log("[openclaw] Social adaptations drafted");
-  const adPlan = await withRetry(() => generateAdPlan(article, pillar));
-  console.log("[openclaw] Paid ad test plan drafted");
-  const path = saveDraft(date, pillar, article, social, adPlan);
-  console.log(`[openclaw] Full draft (social + ad plan) saved to ${path} — still review before posting/spending anywhere off-site.`);
+  // 3 articles/day (was 1) — pull today's pillar plus the next two in the
+  // rotation so the three pieces cover distinct angles instead of repeating.
+  const DAY_MS = 86400000;
+  const pillars = [0, 1, 2].map(offset => pickTodaysPillar(new Date(date.getTime() + offset * DAY_MS)));
 
-  const post = publishPost({ title: article.title, metaDescription: article.metaDescription, bodyMarkdown: article.bodyMarkdown, date: date.toISOString().slice(0, 10) });
-  console.log(`[openclaw] Article auto-published live to GiantBiteAI's own /blog/${post.slug}`);
+  for (const [i, pillar] of pillars.entries()) {
+    console.log(`[openclaw] Article ${i + 1}/3 — pillar: ${pillar.id} — ${pillar.angle}`);
+    try {
+      const article = await withRetry(() => generateArticle(pillar, hint));
+      console.log(`[openclaw] Article drafted: "${article.title}"`);
+
+      // Social + ad-plan drafts only for the lead article — one review pack per
+      // day is what Ken actually reads; three near-duplicate packs is noise.
+      if (i === 0) {
+        const social = await withRetry(() => generateSocialAdaptations(article, pillar));
+        console.log("[openclaw] Social adaptations drafted");
+        const adPlan = await withRetry(() => generateAdPlan(article, pillar));
+        console.log("[openclaw] Paid ad test plan drafted");
+        const path = saveDraft(date, pillar, article, social, adPlan);
+        console.log(`[openclaw] Full draft (social + ad plan) saved to ${path} — still review before posting/spending anywhere off-site.`);
+      }
+
+      const post = publishPost({
+        title: article.title,
+        metaDescription: article.metaDescription,
+        bodyMarkdown: article.bodyMarkdown + CROSS_PROMO_FOOTER,
+        date: date.toISOString().slice(0, 10),
+      });
+      console.log(`[openclaw] Article ${i + 1}/3 auto-published live to GiantBiteAI's own /blog/${post.slug}`);
+    } catch (err) {
+      // One failed article shouldn't kill the other two slots.
+      console.error(`[openclaw] Article ${i + 1}/3 failed after retries: ${err.message} — continuing with remaining slots.`);
+    }
+  }
 }
 
 main().catch((err) => {
