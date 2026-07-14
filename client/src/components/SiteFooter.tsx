@@ -10,7 +10,7 @@ export default function SiteFooter() {
           <Link to="/terms" className="hover:text-gray-300 hover:underline">Terms</Link>
           <Link to="/privacy" className="hover:text-gray-300 hover:underline">Privacy</Link>
         </div>
-        <p className="text-sm text-gray-500">© {new Date().getFullYear()} GiantBiteAI. Free to start, no ads.</p>
+        <p className="text-sm text-gray-500">© {new Date().getFullYear()} GiantBiteAI. All rights reserved.</p>
       </div>
     </footer>
   );
