@@ -77,7 +77,7 @@ export default function Pricing() {
       </label>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-3">
-        <div className="rounded-2xl border border-char-800 bg-char-900 p-7">
+        <div className="card-premium p-7">
           <h2 className="text-lg font-bold text-white">Free</h2>
           <p className="mt-1 text-3xl font-bold text-white">$0</p>
           <p className="mt-1 text-xs text-gray-500">Get a real feel for what GiantBiteAI can do.</p>
@@ -91,7 +91,7 @@ export default function Pricing() {
           <p className="mt-5 text-xs text-gray-500">{state.tier !== "free" ? "You're upgraded." : "You're on this plan right now."}</p>
         </div>
 
-        <div className="rounded-2xl border border-char-700 bg-char-900 p-7">
+        <div className="card-premium p-7">
           <h2 className="text-lg font-bold text-white">GiantBiteAI Regular</h2>
           <p className="mt-1 text-3xl font-bold text-white">
             ${REGULAR_PRICE_MONTHLY}
@@ -125,7 +125,7 @@ export default function Pricing() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-ember-500/40 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-7">
+        <div className="card-premium-featured p-7">
           <h2 className="text-lg font-bold text-white">GiantBiteAI Pro</h2>
           <p className="mt-1 text-3xl font-bold text-white">
             ${PRO_PRICE_MONTHLY}

@@ -69,7 +69,7 @@ export default function Dashboard() {
 
       <FeatureGrid />
 
-      <div className="rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-6">
+      <div className="card-premium-featured p-6">
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           <Stat label="🔥 Day streak" value={state.streak} />
           <Stat label="🏅 Best streak" value={state.longestStreak} />
@@ -198,7 +198,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div className="rounded-2xl border border-char-800 bg-char-900 p-6">
+      <div className="card-premium p-6">
         <h2 className="text-lg font-bold text-white">Invite your kitchen crew</h2>
         <p className="mt-1 text-sm text-gray-400">
           No paywall to unlock — just bragging rights. Invite 3 friends to earn Kitchen Crew status.
