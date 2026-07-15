@@ -7,6 +7,7 @@ import { chatJSON, streamText } from "./ai.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM, NUTRITION_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 import { listPosts, getPost, publishPost } from "./blog.mjs";
+import { startDailyBlogScheduler } from "./blog-scheduler.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
@@ -317,4 +318,7 @@ app.use(express.static(CLIENT_DIST));
 app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(join(CLIENT_DIST, "index.html")));
 
 const PORT = process.env.PORT || 8787;
-app.listen(PORT, () => console.log(`GiantBiteAI server listening on :${PORT}`));
+app.listen(PORT, () => {
+  console.log(`GiantBiteAI server listening on :${PORT}`);
+  startDailyBlogScheduler();
+});

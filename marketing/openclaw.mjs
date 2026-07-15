@@ -203,6 +203,18 @@ async function main() {
   const date = new Date();
   const hint = seasonalHint(date);
 
+  // Preflight — makes any misconfig obvious in the logs at a glance.
+  const httpMode = !!(process.env.BLOG_API_TOKEN && process.env.PUBLIC_BASE_URL);
+  console.log("[openclaw] preflight:", JSON.stringify({
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY ? "set" : "MISSING",
+    publishMode: httpMode ? `HTTP → ${process.env.PUBLIC_BASE_URL}` : "local file (writes to BLOG_DATA_DIR volume)",
+    BLOG_DATA_DIR: process.env.BLOG_DATA_DIR || "(unset — repo file)",
+  }));
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("[openclaw] GEMINI_API_KEY is missing — cannot generate. Set it on this service and re-run.");
+    process.exit(1);
+  }
+
   // 3 articles/day (was 1) — pull today's pillar plus the next two in the
   // rotation so the three pieces cover distinct angles instead of repeating.
   const DAY_MS = 86400000;
