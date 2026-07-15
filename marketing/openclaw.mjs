@@ -179,6 +179,26 @@ const CROSS_PROMO_FOOTER =
   "\n\n---\n\n*From the team behind GiantBiteAI: want to get more out of AI beyond the kitchen? " +
   "[ClaudeCraft](https://claudecraft.ca) sells done-for-you Claude AI skill bundles for work, content, and everyday life.*";
 
+// Publish a post to GiantBiteAI's own /blog. On Railway (cron service), set
+// BLOG_API_TOKEN + PUBLIC_BASE_URL so it POSTs to the live web service's
+// persistent store. With neither set (local dev), it writes the repo file.
+async function publishArticleLive(post) {
+  const token = process.env.BLOG_API_TOKEN;
+  const base = process.env.PUBLIC_BASE_URL;
+  if (token && base) {
+    const res = await fetch(`${base.replace(/\/$/, "")}/api/blog`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-OpenClaw-Token": token },
+      body: JSON.stringify(post),
+    });
+    if (!res.ok) {
+      throw new Error(`publish failed ${res.status}: ${(await res.text()).slice(0, 160)}`);
+    }
+    return (await res.json()).post;
+  }
+  return publishPost(post);
+}
+
 async function main() {
   const date = new Date();
   const hint = seasonalHint(date);
@@ -205,7 +225,7 @@ async function main() {
         console.log(`[openclaw] Full draft (social + ad plan) saved to ${path} — still review before posting/spending anywhere off-site.`);
       }
 
-      const post = publishPost({
+      const post = await publishArticleLive({
         title: article.title,
         metaDescription: article.metaDescription,
         bodyMarkdown: article.bodyMarkdown + CROSS_PROMO_FOOTER,

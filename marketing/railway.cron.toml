@@ -1,0 +1,22 @@
+# GiantBite OpenClaw — daily content cron.
+#
+# Deploy this as a SEPARATE Railway service in the SAME project as the GiantBite
+# web app (so it inherits GEMINI_API_KEY). In that service's Settings, set the
+# config file path to "marketing/railway.cron.toml".
+#
+# It runs the content engine once a day: drafts 3 blog posts and publishes them
+# to the live site's /api/blog (persistent store), and saves social/ad drafts
+# for manual review. It does NOT serve web traffic.
+#
+# Required env vars on THIS service:
+#   GEMINI_API_KEY   — already in the project (inherit it)
+#   BLOG_API_TOKEN   — shared secret; must match the web service's BLOG_API_TOKEN
+#   PUBLIC_BASE_URL  — https://giantbiteai-production.up.railway.app (or your domain)
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node marketing/openclaw.mjs"
+cronSchedule = "0 14 * * *"   # 14:00 UTC daily (~10am ET)
+restartPolicyType = "NEVER"

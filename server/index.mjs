@@ -6,7 +6,7 @@ import { dirname, join } from "path";
 import { chatJSON, streamText } from "./ai.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM, NUTRITION_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
-import { listPosts, getPost } from "./blog.mjs";
+import { listPosts, getPost, publishPost } from "./blog.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
@@ -36,6 +36,25 @@ app.get("/api/blog/:slug", (req, res) => {
   const post = getPost(req.params.slug);
   if (!post) return res.status(404).json({ error: "Post not found" });
   res.json({ post });
+});
+
+// Authenticated publish — used by the daily OpenClaw cron (marketing/openclaw.mjs).
+// Requires BLOG_API_TOKEN to be set; posts land in the persistent BLOG_DATA_DIR store.
+app.post("/api/blog", (req, res) => {
+  const token = req.get("X-OpenClaw-Token");
+  if (!process.env.BLOG_API_TOKEN || token !== process.env.BLOG_API_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const { title, metaDescription, bodyMarkdown, date } = req.body || {};
+  if (!title || !bodyMarkdown) {
+    return res.status(400).json({ error: "title and bodyMarkdown are required" });
+  }
+  try {
+    const post = publishPost({ title, metaDescription, bodyMarkdown, date });
+    res.json({ ok: true, post });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.post("/api/recipe", async (req, res) => {

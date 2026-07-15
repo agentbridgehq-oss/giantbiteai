@@ -9,9 +9,10 @@ name: Daily Blog Post
 #   Settings > Secrets and variables > Actions > New repository secret
 #   Name: GEMINI_API_KEY   Value: (your Google AI Studio key)
 
+# Manual-only alternative to the Railway cron (marketing/RAILWAY_CRON_SETUP.md).
+# The daily schedule is intentionally disabled so the two can't double-post —
+# run this from the Actions tab only if you're NOT using the Railway cron.
 on:
-  schedule:
-    - cron: "0 14 * * *" # 14:00 UTC daily (~10am ET)
   workflow_dispatch: {}
 
 # Prevent overlapping runs
