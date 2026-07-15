@@ -1,0 +1,58 @@
+name: Daily Blog Post
+
+# Runs OpenClaw's content engine once a day: drafts + auto-publishes one blog
+# post to server/blog-posts.json (first-party content on GiantBiteAI's own /blog),
+# then commits it so it persists across Railway redeploys and triggers a redeploy.
+# Social/ad drafts land in marketing/drafts/ for manual review (never auto-posted).
+#
+# Setup (one-time): add GEMINI_API_KEY as a repo secret —
+#   Settings > Secrets and variables > Actions > New repository secret
+#   Name: GEMINI_API_KEY   Value: (your Google AI Studio key)
+
+on:
+  schedule:
+    - cron: "0 14 * * *" # 14:00 UTC daily (~10am ET)
+  workflow_dispatch: {}
+
+# Prevent overlapping runs
+concurrency:
+  group: daily-blog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Generate + publish today's blog post
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "❌ GEMINI_API_KEY secret is not set — add it under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          node marketing/openclaw.mjs
+
+      - name: Commit new post
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add server/blog-posts.json marketing/drafts 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Daily blog post ($(date -u +%Y-%m-%d)) [skip ci]"
+            git push
+            echo "Published and committed today's blog post."
+          fi
