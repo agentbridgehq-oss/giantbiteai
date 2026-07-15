@@ -17,12 +17,14 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import ToastHost from "./components/ToastHost";
+import ScrollToTop from "./components/ScrollToTop";
 
 const OpenDashboard = lazy(() => import("./pages/OpenDashboard"));
 
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Explore />} />
         <Route path="/explore" element={<Explore />} />
