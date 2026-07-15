@@ -69,7 +69,7 @@ export default function Dashboard() {
 
       <FeatureGrid />
 
-      <div className="card-premium-featured p-6">
+      <div className="border-y border-char-800 py-6">
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           <Stat label="🔥 Day streak" value={state.streak} />
           <Stat label="🏅 Best streak" value={state.longestStreak} />
@@ -83,18 +83,13 @@ export default function Dashboard() {
 
       <div>
         <h2 className="text-lg font-bold text-white">Badges</h2>
-        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5">
+        <div className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
           {ALL_BADGES.map((b) => {
             const earned = state.badges.includes(b);
             return (
-              <div
-                key={b}
-                className={`flex flex-col items-center gap-1.5 rounded-xl border p-4 text-center ${
-                  earned ? "border-ember-500/40 bg-ember-500/5" : "border-char-800 bg-char-900 opacity-40"
-                }`}
-              >
-                <span className="text-2xl">{BADGE_META[b].emoji}</span>
-                <span className="text-xs font-medium text-gray-300">{BADGE_META[b].label}</span>
+              <div key={b} className={`flex items-center gap-2 ${earned ? "" : "opacity-35"}`}>
+                <span className="text-xl">{BADGE_META[b].emoji}</span>
+                <span className={`text-sm font-medium ${earned ? "text-gray-200" : "text-gray-400"}`}>{BADGE_META[b].label}</span>
               </div>
             );
           })}

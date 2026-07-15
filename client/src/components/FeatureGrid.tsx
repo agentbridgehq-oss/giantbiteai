@@ -31,12 +31,11 @@ export default function FeatureGrid() {
           key={to}
           type="button"
           onClick={() => open(to)}
-          className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-char-800/40 p-5 text-left backdrop-blur-xl transition-all duration-200 ease-out hover:-translate-y-1 hover:border-ember-500/50 hover:bg-char-700/60 hover:shadow-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/60 lg:col-span-2 ${lgPos ?? ""} ${
-            pressed === to ? "scale-95 opacity-80" : "scale-100"
+          className={`rounded-lg border border-ember-500/10 bg-char-900 p-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-ember-500/40 hover:shadow-[0_0_30px_rgba(249,115,22,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/60 lg:col-span-2 ${lgPos ?? ""} ${
+            pressed === to ? "opacity-70" : ""
           }`}
         >
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-          <Icon className="h-6 w-6 text-ember-400 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.75} />
+          <Icon className="h-6 w-6 text-ember-400" strokeWidth={1.75} />
           <p className="mt-3 text-sm font-semibold text-white">{label}</p>
           <p className="mt-1 text-xs leading-snug text-gray-400">{desc}</p>
         </button>

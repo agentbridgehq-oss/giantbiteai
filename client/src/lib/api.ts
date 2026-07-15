@@ -48,6 +48,9 @@ export interface BlogPostMeta {
   title: string;
   metaDescription: string;
   date: string;
+  category?: string;
+  minutes?: number;
+  coverImage?: string;
 }
 
 export interface BlogPost extends BlogPostMeta {

@@ -29,7 +29,7 @@ export default function BlogPostPage() {
             <p className="text-xs text-gray-500">{post.date}</p>
             <h1 className="mt-1.5 font-display text-3xl font-bold text-white">{post.title}</h1>
             <div
-              className="mt-6 text-gray-300 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-white [&_p]:my-4 [&_p]:leading-relaxed [&_strong]:text-gray-100 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1"
+              className="mt-6 text-gray-300 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-white [&_p]:my-4 [&_p]:leading-relaxed [&_strong]:text-gray-100 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_img]:my-8 [&_img]:w-full [&_img]:rounded-2xl [&_img]:border [&_img]:border-white/10 [&_img]:shadow-lg [&_a]:text-ember-400 [&_a]:underline [&_hr]:my-8 [&_hr]:border-char-800 [&_em]:text-gray-400"
               dangerouslySetInnerHTML={{ __html: marked.parse(post.bodyMarkdown.replace(/^#[^\n]*\n/, "")) as string }}
             />
             <div className="mt-10 rounded-2xl border border-ember-500/30 bg-gradient-to-br from-ember-500/10 to-red-600/5 p-6 text-center">
