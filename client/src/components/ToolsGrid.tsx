@@ -37,14 +37,14 @@ export default function ToolsGrid() {
             <Link
               key={tool.to}
               to={tool.to}
-              className="group flex flex-col rounded-2xl border border-char-800 bg-char-900 p-6 transition hover:-translate-y-1 hover:border-ember-500/50 hover:shadow-glow"
+              className="card-premium group flex flex-col p-7"
             >
-              <span className="text-3xl">{tool.emoji}</span>
-              <h3 className="mt-4 text-lg font-bold text-white">{tool.title}</h3>
+              <span className="icon-tile text-2xl">{tool.emoji}</span>
+              <h3 className="mt-5 font-display text-xl font-bold text-white">{tool.title}</h3>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-400">{tool.desc}</p>
-              <div className="mt-5 flex items-center justify-between">
-                <span className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-gray-400">{tool.tag}</span>
-                <span className="text-ember-400 transition group-hover:translate-x-1">→</span>
+              <div className="mt-6 flex items-center justify-between">
+                <span className="pill-glass rounded-full px-3 py-1 text-xs font-medium text-gray-300">{tool.tag}</span>
+                <span className="text-lg text-ember-400 transition-transform duration-200 group-hover:translate-x-1">→</span>
               </div>
             </Link>
           ))}
