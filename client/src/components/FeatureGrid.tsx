@@ -31,13 +31,13 @@ export default function FeatureGrid() {
           key={to}
           type="button"
           onClick={() => open(to)}
-          className={`rounded-lg border border-ember-500/10 bg-char-900 p-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-ember-500/40 hover:shadow-[0_0_30px_rgba(249,115,22,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/60 lg:col-span-2 ${lgPos ?? ""} ${
+          className={`rounded-xl border border-white/5 bg-char-900 p-7 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-ember-500/30 hover:shadow-[0_0_40px_rgba(249,115,22,0.05)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/60 lg:col-span-2 ${lgPos ?? ""} ${
             pressed === to ? "opacity-70" : ""
           }`}
         >
-          <Icon className="h-6 w-6 text-ember-400" strokeWidth={1.75} />
-          <p className="mt-3 text-sm font-semibold text-white">{label}</p>
-          <p className="mt-1 text-xs leading-snug text-gray-400">{desc}</p>
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ember-500/25"><Icon className="h-5 w-5 text-ember-400" strokeWidth={1.5} /></span>
+          <p className="mt-4 font-display text-base font-bold text-white">{label}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-gray-500">{desc}</p>
         </button>
       ))}
     </div>

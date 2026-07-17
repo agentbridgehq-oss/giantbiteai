@@ -55,9 +55,10 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="font-display text-2xl font-bold text-white">Your Dashboard</h1>
+      <div className="rise-in rise-1">
+        <p className="section-label">GiantBiteAI</p>
+        <div className="mt-1 flex items-center gap-3">
+          <h1 className="font-display text-3xl font-bold text-white">Your Dashboard</h1>
           {state.tier !== "free" && (
             <span className="rounded-full bg-ember-500/10 px-2.5 py-1 text-xs font-semibold text-ember-400">
               🎁 Founding {state.tier === "pro" ? "Pro" : "Member"}
@@ -67,10 +68,10 @@ export default function Dashboard() {
         <p className="text-sm text-gray-400">Everything below lives only in this browser — no account needed.</p>
       </div>
 
-      <FeatureGrid />
+      <div className="rise-in rise-2"><FeatureGrid /></div>
 
-      <div className="border-y border-char-800 py-6">
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+      <div className="rise-in rise-3 border-y border-char-800 py-8">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 sm:divide-x sm:divide-char-800 [&>div]:sm:pl-8 [&>div:first-child]:sm:pl-0">
           <Stat label="🔥 Day streak" value={state.streak} />
           <Stat label="🏅 Best streak" value={state.longestStreak} />
           <Stat label="💸 Money saved" value={`$${state.moneySavedUsd.toFixed(0)}`} />
@@ -82,7 +83,8 @@ export default function Dashboard() {
       </div>
 
       <div>
-        <h2 className="text-lg font-bold text-white">Badges</h2>
+        <p className="section-label">Progress</p>
+        <h2 className="mt-1 font-display text-xl font-bold text-white">Badges</h2>
         <div className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
           {ALL_BADGES.map((b) => {
             const earned = state.badges.includes(b);
@@ -98,7 +100,8 @@ export default function Dashboard() {
 
       {tasteTags.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold text-white">Your Taste Profile</h2>
+          <p className="section-label">Palate</p>
+          <h2 className="mt-1 font-display text-xl font-bold text-white">Your Taste Profile</h2>
           <p className="text-sm text-gray-400">Built from what you've cooked — future recipes lean into this.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {tasteTags.map((tag) => (
@@ -111,7 +114,8 @@ export default function Dashboard() {
       )}
 
       <div>
-        <h2 className="text-lg font-bold text-white">My Recipes ({state.savedRecipes.length})</h2>
+        <p className="section-label">Collection</p>
+        <h2 className="mt-1 font-display text-xl font-bold text-white">My Recipes ({state.savedRecipes.length})</h2>
         {state.savedRecipes.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">Tap "Save Recipe" on any result to build your collection here.</p>
         ) : (
@@ -167,7 +171,8 @@ export default function Dashboard() {
       </div>
 
       <div>
-        <h2 className="text-lg font-bold text-white">Weekly Meal Calendar</h2>
+        <p className="section-label">Planning</p>
+        <h2 className="mt-1 font-display text-xl font-bold text-white">Weekly Meal Calendar</h2>
         <p className="mt-1 text-sm text-gray-400">Assign a saved recipe to each day of the week.</p>
         {state.savedRecipes.length === 0 ? (
           <p className="mt-3 text-sm text-gray-500">Save a recipe first to start scheduling your week.</p>
@@ -194,7 +199,8 @@ export default function Dashboard() {
       </div>
 
       <div className="card-premium p-6">
-        <h2 className="text-lg font-bold text-white">Invite your kitchen crew</h2>
+        <p className="section-label">Community</p>
+        <h2 className="mt-1 font-display text-xl font-bold text-white">Invite your kitchen crew</h2>
         <p className="mt-1 text-sm text-gray-400">
           No paywall to unlock — just bragging rights. Invite 3 friends to earn Kitchen Crew status.
         </p>
@@ -217,8 +223,8 @@ export default function Dashboard() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="text-xs text-gray-400">{label}</div>
+      <div className="font-display text-3xl font-bold text-white">{value}</div>
+      <div className="mt-1.5 text-xs tracking-wide text-gray-500">{label}</div>
     </div>
   );
 }

@@ -12,6 +12,22 @@ body {
   color: #e8e8ec;
 }
 
+/* Scene-timeline entrances (Remotion-style stagger) — fade+rise only, no tilt */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in { opacity: 0; animation: rise-in 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.rise-1 { animation-delay: 0.05s; } .rise-2 { animation-delay: 0.15s; }
+.rise-3 { animation-delay: 0.25s; } .rise-4 { animation-delay: 0.35s; }
+.rise-5 { animation-delay: 0.45s; } .rise-6 { animation-delay: 0.55s; }
+
+/* Classy section label */
+.section-label {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+  color: #6b7280;
+}
+
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
