@@ -26,7 +26,7 @@ const TOOLS = [
 
 export default function ToolsGrid() {
   return (
-    <section id="tools" className="px-4 py-20">
+    <section id="tools" className="section-seam px-4 py-20">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Three tools. Zero friction.</h2>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import Logo from "./Logo";
 import SideChat from "./SideChat";
@@ -23,33 +23,51 @@ export default function AppShell() {
   const state = useGbaState();
   const [moreOpen, setMoreOpen] = useState(false);
 
+  // Close "More" on Escape
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMoreOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [moreOpen]);
+
   return (
-    <div className="min-h-screen bg-char-950">
-      <header className="sticky top-0 z-40 border-b border-char-800 bg-char-950/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Logo to="/" />
-          <nav className="flex items-center gap-1 rounded-full border border-char-800 bg-char-900 p-1">
+    <div className="min-h-dvh bg-char-950">
+      <header className="sticky top-0 z-40 border-b border-char-800 bg-char-950/90 backdrop-blur supports-[backdrop-filter]:bg-char-950/75">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-4">
+          <div className="min-w-0 shrink-0">
+            <Logo to="/" />
+          </div>
+
+          <nav
+            className="flex min-w-0 max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-char-800 bg-char-900 p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="App"
+          >
             {TABS.map((t) => (
               <NavLink
                 key={t.to}
                 to={t.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold transition ${
+                  `flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm font-semibold transition sm:px-3 ${
                     isActive ? "btn-ember text-white" : "text-gray-400 hover:text-white"
                   }`
                 }
               >
-                <span>{t.icon}</span>
+                <span aria-hidden>{t.icon}</span>
                 <span className="hidden sm:inline">{t.label}</span>
               </NavLink>
             ))}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 type="button"
                 onClick={() => setMoreOpen((v) => !v)}
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-gray-400 transition hover:text-white"
+                aria-expanded={moreOpen}
+                aria-haspopup="menu"
+                className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm font-semibold text-gray-400 transition hover:text-white sm:px-3"
               >
-                <span>⋯</span>
+                <span aria-hidden>⋯</span>
                 <span className="hidden sm:inline">More</span>
               </button>
               {moreOpen && (
@@ -60,11 +78,15 @@ export default function AppShell() {
                     className="fixed inset-0 z-40 cursor-default"
                     onClick={() => setMoreOpen(false)}
                   />
-                  <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-char-800 bg-char-900 p-1.5 shadow-lg">
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-char-800 bg-char-900 p-1.5 shadow-lg"
+                  >
                     {MORE_LINKS.map((l) => (
                       <NavLink
                         key={l.to}
                         to={l.to}
+                        role="menuitem"
                         onClick={() => setMoreOpen(false)}
                         className={({ isActive }) =>
                           `flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
@@ -72,7 +94,7 @@ export default function AppShell() {
                           }`
                         }
                       >
-                        <span>{l.icon}</span>
+                        <span aria-hidden>{l.icon}</span>
                         {l.label}
                       </NavLink>
                     ))}
@@ -81,13 +103,14 @@ export default function AppShell() {
               )}
             </div>
           </nav>
-          <div className="flex items-center gap-2">
+
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {state.tier !== "free" ? (
-              <Link to="/pricing" className="rounded-full bg-char-800 px-3 py-1.5 text-xs font-semibold text-ember-400">
+              <Link to="/pricing" className="rounded-full bg-char-800 px-2.5 py-1.5 text-xs font-semibold text-ember-400 sm:px-3">
                 ★ {state.tier === "pro" ? "Pro" : "Regular"}
               </Link>
             ) : (
-              <Link to="/pricing" className="btn-ember rounded-full px-3 py-1.5 text-xs font-semibold text-white">
+              <Link to="/pricing" className="btn-ember rounded-full px-2.5 py-1.5 text-xs font-semibold text-white sm:px-3">
                 Upgrade
               </Link>
             )}

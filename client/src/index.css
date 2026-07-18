@@ -2,14 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Base / scroll foundation ───────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem; /* sticky header clearance for in-page anchors */
+  overscroll-behavior-y: none;
+  overflow-x: clip;
 }
 
 body {
   font-family: "Inter", system-ui, sans-serif;
   background-color: #0a0a0d;
   color: #e8e8ec;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Kill horizontal rubber-band jank on iOS when nested drawers open */
+#root {
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
+/* Selection — brand-tinted, not browser default blue */
+::selection {
+  background: rgba(249, 115, 22, 0.35);
+  color: #fff;
 }
 
 /* Scene-timeline entrances (Remotion-style stagger) — fade+rise only, no tilt */
@@ -128,11 +148,97 @@ body {
   background: rgba(255, 255, 255, 0.04);
 }
 
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #0a0a0d; }
-::-webkit-scrollbar-thumb { background: #2a2a33; border-radius: 8px; }
+/* Soft section handoff — keeps landing scroll feeling continuous */
+.section-seam {
+  position: relative;
+}
+.section-seam::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 20%,
+    rgba(249, 115, 22, 0.18) 50%,
+    rgba(255, 255, 255, 0.06) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
 
+/* ── Scrollbar (premium, unobtrusive) ──────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a33 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a33;
+  border-radius: 999px;
+  border: 2px solid #0a0a0d;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3d3d4a;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Focus rings ───────────────────────────────────────────────────── */
+:focus {
+  outline: none;
+}
 :focus-visible {
   outline: 2px solid #fb923c;
   outline-offset: 2px;
+}
+
+/* Form controls that style their own border on focus still get a soft ring */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.35);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .rise-in {
+    opacity: 1;
+    animation: none;
+  }
+
+  .card-premium:hover,
+  .card-premium-featured:hover {
+    transform: none;
+  }
+
+  .pulse-dot,
+  .flame-flicker {
+    animation: none;
+  }
 }

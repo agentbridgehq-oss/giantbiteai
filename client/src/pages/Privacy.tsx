@@ -1,7 +1,16 @@
+import { Link } from "react-router-dom";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
+
 export default function Privacy() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 text-gray-300">
-      <h1 className="font-display text-3xl font-bold text-white">Privacy Policy</h1>
+    <div className="min-h-dvh bg-char-950">
+      <SiteHeader />
+      <div className="mx-auto max-w-3xl px-4 py-12 text-gray-300">
+        <Link to="/" className="text-sm text-ember-400 hover:underline">
+          ← Back home
+        </Link>
+      <h1 className="mt-4 font-display text-3xl font-bold text-white">Privacy Policy</h1>
       <p className="mt-2 text-sm text-gray-500">Last updated: June 28, 2026</p>
 
       <div className="mt-8 space-y-6 text-sm leading-relaxed">
@@ -71,6 +80,8 @@ export default function Privacy() {
           </p>
         </section>
       </div>
+      </div>
+      <SiteFooter />
     </div>
   );
 }

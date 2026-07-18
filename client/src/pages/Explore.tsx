@@ -24,7 +24,7 @@ export default function Explore() {
   }, [params]);
 
   return (
-    <div className="bg-char-950">
+    <div className="min-h-dvh bg-char-950">
       {referredBanner && (
         <div className="bg-ember-600/90 px-4 py-2 text-center text-sm font-semibold text-white">
           👋 You were invited by a friend — welcome to GiantBiteAI!

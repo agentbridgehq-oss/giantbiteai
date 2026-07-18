@@ -9,7 +9,7 @@ const ITEMS = [
 
 export default function ViralCallout() {
   return (
-    <section className="px-4 py-20">
+    <section className="section-seam px-4 py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Built to brag about</h2>

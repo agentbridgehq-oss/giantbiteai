@@ -14,7 +14,7 @@ export default function Blog() {
   }, []);
 
   return (
-    <div className="bg-char-950">
+    <div className="min-h-dvh bg-char-950">
       <SiteHeader />
       <div className="mx-auto max-w-3xl px-4 py-16">
         <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">The GiantBiteAI Blog</h1>

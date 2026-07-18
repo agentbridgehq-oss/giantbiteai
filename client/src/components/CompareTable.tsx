@@ -1,5 +1,5 @@
 const ROWS = [
-  { name: "GiantBiteAI", price: "Free, or $4.99/mo Pro", limit: "3 recipes/day free", ads: "None, ever", coach: "Yes (2 free, unlimited on Pro)", us: true },
+  { name: "GiantBiteAI", price: "Free · $5.99/mo · $12.99 Pro", limit: "3 recipes/day free", ads: "None, ever", coach: "Yes (2 free, unlimited on Pro)", us: true },
   { name: "SideChef", price: "$4.99/mo ($49.99/yr)", limit: "Limited free tier", ads: "Yes (free tier)", coach: "No" },
   { name: "Whisk", price: "$2.99/mo", limit: "5 recipes/mo free", ads: "Yes (free tier)", coach: "No" },
   { name: "ChefGPT", price: "$2.99/mo", limit: "Limited free tier", ads: "Yes (free tier)", coach: "No" },
@@ -7,7 +7,7 @@ const ROWS = [
 
 export default function CompareTable() {
   return (
-    <section id="compare" className="px-4 py-20">
+    <section id="compare" className="section-seam px-4 py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">A free tier that's actually usable</h2>

@@ -19,6 +19,7 @@ export default function SideChat() {
   const [voiceMode, setVoiceMode] = useState(false);
   const [listening, setListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
@@ -88,15 +89,30 @@ export default function SideChat() {
     recognition.start();
   }
 
+  // Escape to close drawer; mark closed drawer inert so tab can't reach it
+  useEffect(() => {
+    const el = drawerRef.current;
+    if (el) {
+      if (open) el.removeAttribute("inert");
+      else el.setAttribute("inert", "");
+    }
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <>
-      {/* Floating launcher */}
+      {/* Floating launcher — clear of home indicator on notched phones */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Open AI Chef chat"
-          className="btn-ember fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white shadow-glow transition hover:scale-105"
+          className="btn-ember fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white shadow-glow transition hover:scale-105 mb-[env(safe-area-inset-bottom)] mr-[env(safe-area-inset-right)]"
         >
           👨‍🍳
         </button>
@@ -107,10 +123,11 @@ export default function SideChat() {
         <div className="fixed inset-0 z-40 bg-black/50 md:bg-transparent" onClick={() => setOpen(false)} aria-hidden />
       )}
 
-      {/* Drawer */}
+      {/* Drawer — inert + pointer-events-none when closed so focus can't land offscreen */}
       <aside
+        ref={drawerRef}
         className={`fixed right-0 top-0 z-50 flex h-full w-full flex-col border-l border-char-800 bg-char-950 shadow-2xl transition-transform duration-300 sm:w-[400px] ${
-          open ? "translate-x-0" : "translate-x-full"
+          open ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
         }`}
         aria-hidden={!open}
       >

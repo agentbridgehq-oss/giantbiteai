@@ -39,7 +39,7 @@ export default function Hero() {
               href="#tools"
               className="flex items-center gap-2 rounded-full border border-char-700 bg-char-900 px-7 py-3.5 text-base font-semibold text-gray-200 transition hover:border-char-600 hover:text-white"
             >
-              ⬚ Explore Tools
+              Explore Tools
             </a>
           </div>
 

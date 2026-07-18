@@ -17,7 +17,7 @@ export default function BlogPostPage() {
   }, [slug]);
 
   return (
-    <div className="bg-char-950">
+    <div className="min-h-dvh bg-char-950">
       <SiteHeader />
       <div className="mx-auto max-w-2xl px-4 py-16">
         <Link to="/blog" className="text-sm text-ember-400 hover:underline">
