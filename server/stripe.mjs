@@ -15,7 +15,7 @@ function getStripe() {
   return stripeClient;
 }
 
-export async function createCheckoutSession({ plan, origin }) {
+export async function createCheckoutSession({ plan, origin, customerEmail }) {
   const priceId = plan === "regular"
     ? (process.env.STRIPE_PRICE_ID_REGULAR || DEFAULT_PRICE_ID_REGULAR)
     : (process.env.STRIPE_PRICE_ID_PRO || DEFAULT_PRICE_ID_PRO);
@@ -28,6 +28,10 @@ export async function createCheckoutSession({ plan, origin }) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${origin}/pricing?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/pricing`,
+    // Capture email for welcome + ownership — Stripe always collects billing email;
+    // prefill when we already have it from the pricing form.
+    ...(customerEmail ? { customer_email: customerEmail } : {}),
+    billing_address_collection: "auto",
   });
   return session.url;
 }
@@ -35,5 +39,10 @@ export async function createCheckoutSession({ plan, origin }) {
 export async function verifyCheckoutSession(sessionId) {
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.retrieve(sessionId);
-  return session.payment_status === "paid" || session.status === "complete";
+  const paid = session.payment_status === "paid" || session.status === "complete";
+  const email =
+    session.customer_details?.email ||
+    session.customer_email ||
+    null;
+  return { paid, email, plan: session.metadata?.plan || null };
 }

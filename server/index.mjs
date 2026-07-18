@@ -6,6 +6,7 @@ import { dirname, join } from "path";
 import { chatJSON, streamText } from "./ai.mjs";
 import { RECIPE_SYSTEM, MEALPLAN_SYSTEM, COACH_SYSTEM, RECIPE_IMPORT_SYSTEM, PAIRING_SYSTEM, NUTRITION_SYSTEM } from "./prompts.mjs";
 import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
+import { sendWelcomeEmail } from "./welcomeEmail.mjs";
 import { listPosts, getPost, publishPost } from "./blog.mjs";
 import { startDailyBlogScheduler } from "./blog-scheduler.mjs";
 
@@ -214,9 +215,13 @@ app.post("/api/nutrition", async (req, res) => {
 
 app.post("/api/checkout", async (req, res) => {
   try {
-    const { plan = "pro" } = req.body;
+    const { plan = "pro", email } = req.body;
     const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
-    const url = await createCheckoutSession({ plan, origin });
+    const url = await createCheckoutSession({
+      plan,
+      origin,
+      customerEmail: typeof email === "string" ? email.trim() : undefined,
+    });
     res.json({ url });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
@@ -227,10 +232,25 @@ app.get("/api/verify-checkout", async (req, res) => {
   try {
     const { session_id } = req.query;
     if (!session_id) throw Object.assign(new Error("Missing session_id"), { status: 400 });
-    const paid = await verifyCheckoutSession(session_id);
-    res.json({ paid });
+    const { paid, email, plan } = await verifyCheckoutSession(session_id);
+    if (paid && email) {
+      // Fire-and-forget motivation welcome — never block unlock
+      sendWelcomeEmail({ email, plan: plan || "pro", name: undefined }).catch(() => {});
+    }
+    res.json({ paid, email: email || null });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+// Free-tier / pre-account email capture (motivation welcome)
+app.post("/api/capture-email", async (req, res) => {
+  try {
+    const { email, name, source = "signup" } = req.body || {};
+    const result = await sendWelcomeEmail({ email, plan: "free", name });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -93,8 +93,8 @@ export function importRecipe(input: { url?: string; rawText?: string }) {
   return postJSON<{ recipe: Recipe }>("/import-recipe", input);
 }
 
-export function createCheckout(plan: "regular" | "pro") {
-  return postJSON<{ url: string }>("/checkout", { plan });
+export function createCheckout(plan: "regular" | "pro", email?: string) {
+  return postJSON<{ url: string }>("/checkout", { plan, email });
 }
 
 export async function verifyCheckout(sessionId: string) {
@@ -103,7 +103,15 @@ export async function verifyCheckout(sessionId: string) {
     const detail = await res.json().catch(() => ({}));
     throw new Error(detail.error || `Request failed (${res.status})`);
   }
-  return res.json() as Promise<{ paid: boolean }>;
+  return res.json() as Promise<{ paid: boolean; email?: string | null }>;
+}
+
+export function captureEmail(email: string, name?: string) {
+  return postJSON<{ ok: boolean; welcomeSent?: boolean; duplicate?: boolean }>("/capture-email", {
+    email,
+    name,
+    source: "signup",
+  });
 }
 
 export interface PairingResponse {

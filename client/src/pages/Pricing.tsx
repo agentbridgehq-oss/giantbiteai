@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { setTier, useGbaState, PRO_PRICE_MONTHLY, REGULAR_PRICE_MONTHLY } from "../lib/storage";
-import { createCheckout, verifyCheckout } from "../lib/api";
+import { createCheckout, verifyCheckout, captureEmail } from "../lib/api";
 import { showToast } from "../lib/toast";
 
 const PENDING_PLAN_KEY = "giantbiteai_pending_plan";
@@ -11,6 +11,7 @@ export default function Pricing() {
   const [params, setParams] = useSearchParams();
   const [loading, setLoading] = useState<"regular" | "pro" | null>(null);
   const [agreed, setAgreed] = useState(false);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const sessionId = params.get("session_id");
@@ -37,10 +38,18 @@ export default function Pricing() {
       showToast("Please agree to the Terms of Service and Privacy Policy first.");
       return;
     }
+    const trimmed = email.trim();
+    if (trimmed && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      showToast("Enter a valid email so we can send your Day-1 welcome.");
+      return;
+    }
     setLoading(plan);
     localStorage.setItem(PENDING_PLAN_KEY, plan);
+    if (trimmed) {
+      captureEmail(trimmed).catch(() => {});
+    }
     try {
-      const { url } = await createCheckout(plan);
+      const { url } = await createCheckout(plan, trimmed || undefined);
       window.location.href = url;
     } catch {
       setTier(plan);
@@ -59,7 +68,23 @@ export default function Pricing() {
         </p>
       </div>
 
-      <label className="mt-8 flex items-start gap-3 rounded-xl border border-char-800 bg-char-900/60 p-4 text-sm text-gray-300">
+      <div className="mt-8 rounded-xl border border-char-800 bg-char-900/60 p-4">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Email for your Day-1 welcome (recommended)
+        </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@email.com"
+          className="mt-2 w-full rounded-lg border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-ember-500 focus:outline-none focus:ring-1 focus:ring-ember-500"
+        />
+        <p className="mt-1.5 text-xs text-gray-500">
+          We’ll send one motivation-style onboarding email — not a spam drip. Unsubscribe anytime.
+        </p>
+      </div>
+
+      <label className="mt-4 flex items-start gap-3 rounded-xl border border-char-800 bg-char-900/60 p-4 text-sm text-gray-300">
         <input
           type="checkbox"
           checked={agreed}
