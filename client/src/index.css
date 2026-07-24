@@ -2,50 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Base / scroll foundation ───────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5.5rem; /* sticky header clearance for in-page anchors */
-  overscroll-behavior-y: none;
-  overflow-x: clip;
+  /* Base readable size — slightly above typical SaaS for 55+ friendliness */
+  font-size: 17px;
+}
+
+/* Comfort Mode: larger type, bigger hit targets, more line spacing */
+html.gba-comfort {
+  font-size: 20px;
+}
+html.gba-comfort body {
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+html.gba-comfort .btn-ember,
+html.gba-comfort button,
+html.gba-comfort a.btn-ember,
+html.gba-comfort input,
+html.gba-comfort textarea,
+html.gba-comfort select {
+  min-height: 3rem;
+}
+html.gba-comfort input,
+html.gba-comfort textarea {
+  font-size: 1.05rem;
+  padding: 0.9rem 1rem;
+}
+
+/* High contrast: brighter text, stronger borders */
+html.gba-contrast body {
+  color: #f5f5f7;
+  background-color: #000;
+}
+html.gba-contrast .text-gray-400,
+html.gba-contrast .text-gray-500 {
+  color: #d4d4d8 !important;
+}
+html.gba-contrast .border-char-800,
+html.gba-contrast .border-char-700 {
+  border-color: #52525b !important;
+}
+html.gba-contrast .bg-char-900,
+html.gba-contrast .bg-char-950 {
+  background-color: #0a0a0a !important;
+}
+
+/* Less motion */
+html.gba-reduce-motion *,
+html.gba-reduce-motion *::before,
+html.gba-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 body {
   font-family: "Inter", system-ui, sans-serif;
   background-color: #0a0a0d;
   color: #e8e8ec;
-  overflow-x: clip;
-  overscroll-behavior-y: none;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Kill horizontal rubber-band jank on iOS when nested drawers open */
-#root {
-  min-height: 100dvh;
-  overflow-x: clip;
-}
-
-/* Selection — brand-tinted, not browser default blue */
-::selection {
-  background: rgba(249, 115, 22, 0.35);
+/* Skip link for keyboard / screen-reader users */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  border-radius: 999px;
+  background: #f97316;
   color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  transition: top 0.15s;
+}
+.skip-link:focus {
+  top: 1rem;
 }
 
-/* Scene-timeline entrances (Remotion-style stagger) — fade+rise only, no tilt */
-@keyframes rise-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: none; }
-}
-.rise-in { opacity: 0; animation: rise-in 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
-.rise-1 { animation-delay: 0.05s; } .rise-2 { animation-delay: 0.15s; }
-.rise-3 { animation-delay: 0.25s; } .rise-4 { animation-delay: 0.35s; }
-.rise-5 { animation-delay: 0.45s; } .rise-6 { animation-delay: 0.55s; }
-
-/* Classy section label */
-.section-label {
-  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
-  color: #6b7280;
+/* Comfort helper: always-readable section titles */
+.gba-section-title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.2;
 }
 
 @keyframes pulse-dot {
@@ -79,166 +122,11 @@ body {
   background-image: linear-gradient(90deg, #f97316, #ef4444);
 }
 
-/* ── Premium card system ─────────────────────────────────────────────
-   Layered depth: ember top-glow baked into the surface, a hairline inset
-   highlight, and a soft grounding shadow. Lifts + warms on hover. */
-.card-premium {
-  position: relative;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(130% 90% at 50% -20%, rgba(249, 115, 22, 0.10), transparent 55%),
-    linear-gradient(180deg, #17171e 0%, #0e0e12 100%);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
-    0 18px 40px -24px rgba(0, 0, 0, 0.85);
-  transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.28s ease, box-shadow 0.28s ease;
-}
-.card-premium:hover {
-  transform: translateY(-4px);
-  border-color: rgba(249, 115, 22, 0.5);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 30px 60px -28px rgba(0, 0, 0, 0.9),
-    0 0 54px -14px rgba(249, 115, 22, 0.45);
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #0a0a0d; }
+::-webkit-scrollbar-thumb { background: #2a2a33; border-radius: 8px; }
 
-/* Featured premium card — ember-tinted, for the highlighted plan / hero stat */
-.card-premium-featured {
-  position: relative;
-  border-radius: 20px;
-  border: 1px solid rgba(249, 115, 22, 0.42);
-  background:
-    radial-gradient(130% 90% at 50% -20%, rgba(249, 115, 22, 0.20), transparent 58%),
-    linear-gradient(180deg, rgba(249, 115, 22, 0.06), rgba(239, 68, 68, 0.03)),
-    linear-gradient(180deg, #17151b 0%, #0e0c11 100%);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 24px 50px -26px rgba(0, 0, 0, 0.85),
-    0 0 44px -18px rgba(249, 115, 22, 0.45);
-  transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.28s ease, box-shadow 0.28s ease;
-}
-.card-premium-featured:hover {
-  transform: translateY(-4px);
-  border-color: rgba(249, 115, 22, 0.7);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
-    0 32px 64px -28px rgba(0, 0, 0, 0.9),
-    0 0 68px -16px rgba(249, 115, 22, 0.55);
-}
-
-/* Premium icon tile — a small glass square that holds an emoji/icon */
-.icon-tile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 3rem;
-  width: 3rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-}
-
-/* Subtle glass pill for tags/labels */
-.pill-glass {
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* Soft section handoff — keeps landing scroll feeling continuous */
-.section-seam {
-  position: relative;
-}
-.section-seam::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.06) 20%,
-    rgba(249, 115, 22, 0.18) 50%,
-    rgba(255, 255, 255, 0.06) 80%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-/* ── Scrollbar (premium, unobtrusive) ──────────────────────────────── */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #2a2a33 transparent;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #2a2a33;
-  border-radius: 999px;
-  border: 2px solid #0a0a0d;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #3d3d4a;
-}
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-/* ── Focus rings ───────────────────────────────────────────────────── */
-:focus {
-  outline: none;
-}
 :focus-visible {
   outline: 2px solid #fb923c;
   outline-offset: 2px;
-}
-
-/* Form controls that style their own border on focus still get a soft ring */
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.35);
-}
-
-/* ── Reduced motion ────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .rise-in {
-    opacity: 1;
-    animation: none;
-  }
-
-  .card-premium:hover,
-  .card-premium-featured:hover {
-    transform: none;
-  }
-
-  .pulse-dot,
-  .flame-flicker {
-    animation: none;
-  }
 }

@@ -116,58 +116,72 @@ export default function Cook() {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
+    <div className="grid gap-8 lg:grid-cols-[minmax(320px,420px)_1fr]">
       <div className="space-y-5">
-        <div className="flex gap-1 rounded-full border border-char-800 bg-char-900 p-1">
+        <div className="rounded-2xl border border-ember-500/30 bg-ember-500/10 px-4 py-3 text-base text-gray-200">
+          <strong className="text-white">Tip:</strong> Start with 2–4 things you already have (for example: eggs, rice, onion).
+          Or add a fridge photo. No account needed.
+        </div>
+        <div className="flex gap-1 rounded-2xl border border-char-700 bg-char-900 p-1.5" role="tablist" aria-label="Recipe mode">
           <button
             type="button"
+            role="tab"
+            aria-selected={mode === "ingredients"}
             onClick={() => setMode("ingredients")}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "ingredients" ? "btn-ember text-white" : "text-gray-400"}`}
+            className={`min-h-[48px] flex-1 rounded-xl py-3 text-base font-bold transition ${mode === "ingredients" ? "btn-ember text-white" : "text-gray-300"}`}
           >
-            From Ingredients
+            What I have
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={mode === "import"}
             onClick={() => setMode("import")}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition ${mode === "import" ? "btn-ember text-white" : "text-gray-400"}`}
+            className={`min-h-[48px] flex-1 rounded-xl py-3 text-base font-bold transition ${mode === "import" ? "btn-ember text-white" : "text-gray-300"}`}
           >
-            Import a Recipe
+            Import recipe
           </button>
         </div>
 
         {mode === "ingredients" ? (
-          <form onSubmit={handleGenerate} className="space-y-5 rounded-2xl border border-char-800 bg-char-900 p-6">
-            <h1 className="font-display text-2xl font-bold text-white">Recipe Generator</h1>
-            <p className="text-sm text-gray-400">Type what you have, or snap your fridge/pantry.</p>
+          <form onSubmit={handleGenerate} className="space-y-5 rounded-3xl border border-char-700 bg-char-900 p-6 sm:p-7">
+            <h1 className="font-display text-3xl font-bold text-white">Make a recipe</h1>
+            <p className="text-base leading-relaxed text-gray-300">
+              Type what you have, or snap your fridge or pantry. We will suggest clear recipes you can actually cook.
+            </p>
 
             <div>
-              <div className="mb-1.5 flex items-center justify-between">
-                <label className="block text-sm font-semibold text-gray-300">Ingredients</label>
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <label htmlFor="ingredients" className="block text-base font-bold text-gray-100">
+                  Ingredients
+                </label>
                 {state.pantryItems.length > 0 && (
                   <button
                     type="button"
                     onClick={() => setIngredientsText(state.pantryItems.map((i) => i.name).join(", "))}
-                    className="text-xs text-ember-400 hover:underline"
+                    className="min-h-[40px] text-base font-semibold text-ember-400 hover:underline"
                   >
-                    🧺 Use my pantry
+                    Use my pantry list
                   </button>
                 )}
               </div>
               <textarea
+                id="ingredients"
                 value={ingredientsText}
                 onChange={(e) => setIngredientsText(e.target.value)}
-                placeholder="e.g. chicken thighs, half a bell pepper, rice, eggs..."
+                placeholder="Example: chicken, rice, onion, eggs..."
                 rows={4}
-                className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                className="w-full rounded-2xl border border-char-700 bg-char-950 px-4 py-3 text-base text-white placeholder-gray-500 outline-none focus:border-ember-500"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-300">Or upload a photo</label>
+              <label className="mb-2 block text-base font-bold text-gray-100">Or add a photo</label>
               <input
                 ref={fileInput}
                 type="file"
                 accept="image/*"
+                capture="environment"
                 onChange={handlePhoto}
                 className="hidden"
                 aria-label="Upload a fridge or pantry photo"
@@ -175,73 +189,103 @@ export default function Cook() {
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="w-full rounded-xl border border-dashed border-char-700 bg-char-950 px-3 py-4 text-sm text-gray-400 transition hover:border-ember-500 hover:text-white"
+                className="w-full min-h-[56px] rounded-2xl border-2 border-dashed border-char-600 bg-char-950 px-4 py-5 text-base font-semibold text-gray-200 transition hover:border-ember-500 hover:text-white"
               >
-                {photoPreview ? "📸 Photo attached — tap to replace" : "📸 Tap to add a fridge/pantry photo"}
+                {photoPreview ? "Photo attached — tap to replace" : "Tap to add a fridge or pantry photo"}
               </button>
               {photoPreview && (
-                <img src={photoPreview} alt="preview" className="mt-3 h-32 w-full rounded-xl object-cover" />
+                <img src={photoPreview} alt="Your kitchen photo preview" className="mt-3 h-40 w-full rounded-2xl object-cover" />
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-gray-300">Dietary (optional)</label>
+                <label htmlFor="dietary" className="mb-2 block text-base font-bold text-gray-100">
+                  Dietary needs (optional)
+                </label>
                 <input
+                  id="dietary"
                   value={dietary}
                   onChange={(e) => setDietary(e.target.value)}
                   placeholder="vegetarian, gluten-free..."
-                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                  className="w-full rounded-2xl border border-char-700 bg-char-950 px-4 py-3 text-base text-white placeholder-gray-500 outline-none focus:border-ember-500"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-gray-300">Cal/serving (optional)</label>
+                <label htmlFor="cals" className="mb-2 block text-base font-bold text-gray-100">
+                  Calories per serving (optional)
+                </label>
                 <input
+                  id="cals"
                   type="number"
                   value={targetCalories}
                   onChange={(e) => setTargetCalories(e.target.value)}
                   placeholder="e.g. 500"
-                  className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+                  className="w-full rounded-2xl border border-char-700 bg-char-950 px-4 py-3 text-base text-white placeholder-gray-500 outline-none focus:border-ember-500"
                 />
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-gray-300">
-              <input type="checkbox" checked={leftoversMode} onChange={(e) => setLeftoversMode(e.target.checked)} className="h-4 w-4 accent-ember-500" />
-              ♻️ These are leftovers I need to rescue
+            <label className="flex min-h-[48px] items-center gap-3 text-base text-gray-200">
+              <input
+                type="checkbox"
+                checked={leftoversMode}
+                onChange={(e) => setLeftoversMode(e.target.checked)}
+                className="h-5 w-5 accent-ember-500"
+              />
+              These are leftovers I want to use up
             </label>
 
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && (
+              <p className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-base text-red-300" role="alert">
+                {error}
+              </p>
+            )}
             {remaining !== null && (
-              <p className="text-xs text-gray-500">{remaining} free recipe{remaining === 1 ? "" : "s"} left today</p>
+              <p className="text-base text-gray-400">
+                {remaining} free recipe{remaining === 1 ? "" : "s"} left today on the free plan
+              </p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-ember w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
+              className="btn-ember w-full min-h-[56px] rounded-full py-4 text-lg font-bold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
             >
-              {loading ? "Thinking..." : "Generate Recipes"}
+              {loading ? "Making recipes…" : "Make my recipes →"}
             </button>
+            <p className="text-center text-sm text-gray-500">
+              Free plan: {FREE_RECIPES_PER_DAY} recipes/day · No account · Results in seconds
+            </p>
           </form>
         ) : (
-          <form onSubmit={handleImport} className="space-y-5 rounded-2xl border border-char-800 bg-char-900 p-6">
-            <h1 className="font-display text-2xl font-bold text-white">Import a Recipe</h1>
-            <p className="text-sm text-gray-400">Paste a recipe URL, a YouTube link, or the raw text — we'll strip the ads (or transcribe the video) and clean it up.</p>
+          <form onSubmit={handleImport} className="space-y-5 rounded-3xl border border-char-700 bg-char-900 p-6 sm:p-7">
+            <h1 className="font-display text-3xl font-bold text-white">Import a recipe</h1>
+            <p className="text-base leading-relaxed text-gray-300">
+              Paste a recipe link or the full text. We strip ads and clutter and give you clean steps.
+            </p>
+            <label htmlFor="import-input" className="block text-base font-bold text-gray-100">
+              Link or recipe text
+            </label>
             <textarea
+              id="import-input"
               value={importInput}
               onChange={(e) => setImportInput(e.target.value)}
-              placeholder="https://youtube.com/watch?v=... or a recipe URL, or paste the recipe text..."
+              placeholder="Paste a recipe URL or the full recipe text…"
               rows={6}
-              className="w-full rounded-xl border border-char-700 bg-char-950 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-ember-500"
+              className="w-full rounded-2xl border border-char-700 bg-char-950 px-4 py-3 text-base text-white placeholder-gray-500 outline-none focus:border-ember-500"
             />
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && (
+              <p className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-base text-red-300" role="alert">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
               disabled={loading}
-              className="btn-ember w-full rounded-full py-3 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
+              className="btn-ember w-full min-h-[56px] rounded-full py-4 text-lg font-bold text-white shadow-glow transition hover:brightness-110 disabled:opacity-50"
             >
-              {loading ? "Cleaning up..." : "Import & Clean Up"}
+              {loading ? "Cleaning up…" : "Import & clean up →"}
             </button>
           </form>
         )}
@@ -250,25 +294,42 @@ export default function Cook() {
       <div>
         {quotaBlocked && <UpgradePrompt reason={`You've used today's ${FREE_RECIPES_PER_DAY} free recipes`} />}
         {!quotaBlocked && !result && !importedRecipe && !loading && (
-          <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl border border-dashed border-char-800 text-gray-500">
-            Your recipes will show up here.
+          <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-char-700 bg-char-900/40 px-6 text-center">
+            <span className="text-4xl" aria-hidden>
+              🍳
+            </span>
+            <p className="max-w-sm text-lg font-semibold text-gray-200">Your recipes will show up here</p>
+            <p className="max-w-sm text-base text-gray-400">
+              Add ingredients on the left and press <strong className="text-white">Make my recipes</strong>. You can
+              save favorites and use Hands-Free Mode while you cook.
+            </p>
           </div>
         )}
         {loading && (
-          <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 rounded-2xl border border-char-800 text-gray-400">
-            <span className="flame-flicker text-3xl">🔥</span>
-            Cooking up ideas...
+          <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-4 rounded-3xl border border-char-700 bg-char-900/50 text-gray-200">
+            <span className="flame-flicker text-4xl" aria-hidden>
+              🔥
+            </span>
+            <p className="text-lg font-semibold">Cooking up ideas…</p>
+            <p className="text-base text-gray-400">Usually under 15 seconds</p>
           </div>
         )}
         {result && (
           <div className="space-y-6">
             {result.detectedIngredients.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {result.detectedIngredients.map((ing) => (
-                  <span key={ing} className="rounded-full bg-char-800 px-3 py-1 text-xs font-medium text-gray-300">
-                    {ing}
-                  </span>
-                ))}
+              <div>
+                <p className="mb-2 text-base font-bold text-white">We spotted these ingredients</p>
+                <p className="mb-3 text-sm text-gray-400">Double-check for allergies before you cook.</p>
+                <div className="flex flex-wrap gap-2">
+                  {result.detectedIngredients.map((ing) => (
+                    <span
+                      key={ing}
+                      className="rounded-full bg-char-800 px-3 py-1.5 text-sm font-medium text-gray-200"
+                    >
+                      {ing}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
             {result.recipes.map((r) => (

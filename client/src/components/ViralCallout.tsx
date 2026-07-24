@@ -12,8 +12,8 @@ export default function ViralCallout() {
     <section className="section-seam px-4 py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Built to brag about</h2>
-          <p className="mt-3 text-gray-400">The fun parts other recipe apps skip.</p>
+          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">Why people come back tomorrow</h2>
+          <p className="mt-3 text-lg text-gray-300">Streaks, savings, and shareable wins — without ads or guilt traps.</p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {ITEMS.map((it) => (

@@ -61,10 +61,13 @@ export default function Pricing() {
   return (
     <div className="mx-auto max-w-5xl">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">Pricing that pays for itself</h1>
-        <p className="mt-3 max-w-2xl mx-auto text-gray-400">
-          One skipped takeout order a month covers Regular. One skipped meal-kit subscription covers Pro.
-          Start free, upgrade the moment the caps get in your way.
+        <p className="text-sm font-bold uppercase tracking-widest text-ember-400">Simple plans</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-5xl">
+          Start free. Upgrade only when you need more.
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-300">
+          No ads. No account required to try. One skipped takeout night can cover Regular. Full Coach + unlimited
+          recipes is Pro — the conversion path that works without a bait-and-switch free tier.
         </p>
       </div>
 
