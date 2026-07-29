@@ -9,9 +9,14 @@ export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
   const [saved, setSaved] = useState(() => isRecipeSaved(r.title));
 
   function share() {
-    const text = `I just cooked "${r.title}" with GiantBiteAI — free AI recipes from whatever's in your kitchen. ${r.summary}`;
+    const ingredients = r.ingredients.map((i) => `• ${i.amount} ${i.item}`).join("\n");
+    const steps = r.steps.map((s, i) => `${i + 1}. ${s}`).join("\n");
+    const text =
+      `${r.title} — made with GiantBiteAI\n${r.summary}\n\n` +
+      `Ingredients:\n${ingredients}\n\nSteps:\n${steps}\n\n` +
+      `Get your own free recipe from whatever's in your kitchen:`;
     if (navigator.share) {
-      navigator.share({ title: "GiantBiteAI", text, url: window.location.origin }).catch(() => {});
+      navigator.share({ title: r.title, text, url: window.location.origin }).catch(() => {});
     } else {
       navigator.clipboard.writeText(`${text} ${window.location.origin}`);
       showToast("Copied to clipboard!");
@@ -70,7 +75,7 @@ export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
         {r.wasteTip}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-2 print:hidden">
         <button
           type="button"
           onClick={() => setHandsFree(true)}
@@ -94,7 +99,18 @@ export default function RecipeCard({ recipe: r }: { recipe: Recipe }) {
         >
           📤 Share this recipe
         </button>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="rounded-full border border-char-700 px-4 py-2 text-xs font-semibold text-gray-300 transition hover:border-ember-500 hover:text-white"
+        >
+          🖨 Print recipe
+        </button>
       </div>
+
+      <p className="mt-4 hidden text-xs text-gray-500 print:block">
+        Made with GiantBiteAI — free AI recipes from whatever's in your kitchen.
+      </p>
 
       {handsFree && <HandsFreeMode title={r.title} steps={r.steps} onClose={() => setHandsFree(false)} />}
     </article>

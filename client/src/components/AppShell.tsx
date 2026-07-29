@@ -26,10 +26,10 @@ export default function AppShell() {
 
   return (
     <div className="min-h-screen bg-char-950">
-      <a href="#app-main" className="skip-link">
+      <a href="#app-main" className="skip-link print:hidden">
         Skip to content
       </a>
-      <header className="sticky top-0 z-40 border-b border-char-800 bg-char-950/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-char-800 bg-char-950/95 backdrop-blur print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <Logo to="/" />
           <nav
