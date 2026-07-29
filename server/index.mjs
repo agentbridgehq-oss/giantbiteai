@@ -20,6 +20,17 @@ app.use((_req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('X-XSS-Protection', '0');
+  res.setHeader('Content-Security-Policy', [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "frame-ancestors 'self'",
+    "form-action 'self' https://checkout.stripe.com",
+    "img-src 'self' data: https:",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "script-src 'self' 'unsafe-inline'",
+    "connect-src 'self'",
+  ].join('; '));
   next();
 });
 app.use(cors());
