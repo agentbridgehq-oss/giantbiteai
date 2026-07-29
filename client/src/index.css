@@ -17,8 +17,10 @@ html.gba-comfort body {
   letter-spacing: 0.01em;
 }
 html.gba-comfort .btn-ember,
+html.gba-comfort .btn-launch,
 html.gba-comfort button,
 html.gba-comfort a.btn-ember,
+html.gba-comfort a.btn-launch,
 html.gba-comfort input,
 html.gba-comfort textarea,
 html.gba-comfort select {
@@ -118,8 +120,30 @@ body {
   color: transparent;
 }
 
+/* Marketing primary CTAs (kept for hero / secondary actions) */
 .btn-ember {
   background-image: linear-gradient(90deg, #f97316, #ef4444);
+}
+
+/* Header / launch CTA — solid, quiet, product-UI grade */
+.btn-launch {
+  background: #ea580c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.01em;
+}
+.btn-launch:hover {
+  background: #c2410c;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.btn-launch:active {
+  background: #9a3412;
+  transform: translateY(0.5px);
+}
+html.gba-contrast .btn-launch {
+  background: #f97316;
+  border-color: #fafafa;
+  color: #000;
 }
 
 ::-webkit-scrollbar { width: 10px; }
