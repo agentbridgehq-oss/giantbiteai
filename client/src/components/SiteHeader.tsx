@@ -34,9 +34,9 @@ export default function SiteHeader() {
           <ComfortBar compact />
           <Link
             to="/cook"
-            className="btn-ember min-h-[48px] rounded-full px-6 py-3 text-base font-bold text-white shadow-glow transition hover:brightness-110"
+            className="btn-launch inline-flex min-h-[44px] items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold tracking-tight text-white transition"
           >
-            Open app
+            Launch app
           </Link>
         </div>
       </div>
