@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import dns from "node:dns/promises";
+import net from "node:net";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { chatJSON, streamText } from "./ai.mjs";
@@ -128,8 +130,9 @@ app.post("/api/import-recipe", async (req, res) => {
       } else {
         let pageRes;
         try {
-          pageRes = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
-        } catch {
+          pageRes = await fetchPublicUrl(url, { headers: { "User-Agent": "Mozilla/5.0 (GiantBiteAI recipe importer)" } });
+        } catch (err) {
+          if (err.status) throw err;
           throw Object.assign(new Error("Couldn't reach that URL — check it's correct and publicly accessible."), { status: 422 });
         }
         if (!pageRes.ok) throw Object.assign(new Error(`Couldn't fetch that link (${pageRes.status})`), { status: 422 });
@@ -264,6 +267,97 @@ app.post("/api/capture-email", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// --- SSRF guard for the recipe importer's user-supplied URL ---------------
+// /api/import-recipe lets anyone hand this server a URL to fetch server-side.
+// Without checks, that's a classic SSRF: an attacker could point it at
+// internal services, localhost, or the cloud metadata endpoint
+// (169.254.169.254). We block non-http(s) protocols, reject requests whose
+// hostname resolves (via DNS, not just string-matching) to a private/
+// loopback/link-local/reserved address, and re-validate on every redirect
+// hop instead of letting fetch follow them blindly.
+function isPrivateIPv4(ip) {
+  const parts = ip.split(".").map(Number);
+  if (parts.length !== 4 || parts.some((p) => Number.isNaN(p) || p < 0 || p > 255)) return true; // malformed -> block
+  const [a, b, c] = parts;
+  if (a === 0) return true; // "this" network
+  if (a === 10) return true; // RFC1918
+  if (a === 127) return true; // loopback
+  if (a === 169 && b === 254) return true; // link-local incl. cloud metadata (169.254.169.254)
+  if (a === 172 && b >= 16 && b <= 31) return true; // RFC1918
+  if (a === 192 && b === 168) return true; // RFC1918
+  if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
+  if (a === 192 && b === 0 && c === 0) return true; // IETF protocol assignments
+  if (a === 192 && b === 0 && c === 2) return true; // TEST-NET-1
+  if (a === 198 && (b === 18 || b === 19)) return true; // benchmarking
+  if (a === 198 && b === 51 && c === 100) return true; // TEST-NET-2
+  if (a === 203 && b === 0 && c === 113) return true; // TEST-NET-3
+  if (a >= 224) return true; // multicast (224-239) + reserved (240-255) + broadcast
+  return false;
+}
+
+function isPrivateIPv6(ip) {
+  const lower = ip.toLowerCase();
+  if (lower === "::1" || lower === "::") return true; // loopback / unspecified
+  if (/^fe[89ab][0-9a-f]:/.test(lower)) return true; // fe80::/10 link-local
+  if (/^f[cd][0-9a-f]{2}:/.test(lower)) return true; // fc00::/7 unique local
+  const mapped = lower.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+  if (mapped) return isPrivateIPv4(mapped[1]);
+  return false;
+}
+
+function isPrivateIp(ip) {
+  if (net.isIPv4(ip)) return isPrivateIPv4(ip);
+  if (net.isIPv6(ip)) return isPrivateIPv6(ip);
+  return true; // couldn't classify it -> fail closed
+}
+
+async function assertPublicHttpUrl(rawUrl) {
+  let parsed;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    throw Object.assign(new Error("That doesn't look like a valid URL."), { status: 400 });
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw Object.assign(new Error("Only http/https links are supported."), { status: 400 });
+  }
+  const hostname = parsed.hostname;
+  if (hostname === "localhost" || hostname.endsWith(".localhost")) {
+    throw Object.assign(new Error("That URL points to a private/internal address, which isn't allowed."), { status: 400 });
+  }
+  if (net.isIP(hostname)) {
+    if (isPrivateIp(hostname)) {
+      throw Object.assign(new Error("That URL points to a private/internal address, which isn't allowed."), { status: 400 });
+    }
+    return parsed;
+  }
+  let addresses;
+  try {
+    addresses = await dns.lookup(hostname, { all: true, verbatim: true });
+  } catch {
+    throw Object.assign(new Error("Couldn't resolve that URL's host."), { status: 422 });
+  }
+  if (!addresses.length || addresses.some((a) => isPrivateIp(a.address))) {
+    throw Object.assign(new Error("That URL points to a private/internal address, which isn't allowed."), { status: 400 });
+  }
+  return parsed;
+}
+
+// Fetches a user-supplied URL after validating it (and, on every redirect
+// hop, the redirect target too) isn't pointed at a private/internal address.
+async function fetchPublicUrl(rawUrl, options = {}, redirectsLeft = 5) {
+  const parsed = await assertPublicHttpUrl(rawUrl);
+  const res = await fetch(parsed.toString(), { ...options, redirect: "manual" });
+  if ([301, 302, 303, 307, 308].includes(res.status)) {
+    const location = res.headers.get("location");
+    if (!location) throw Object.assign(new Error("Redirect with no location header."), { status: 422 });
+    if (redirectsLeft <= 0) throw Object.assign(new Error("Too many redirects."), { status: 422 });
+    const nextUrl = new URL(location, parsed).toString();
+    return fetchPublicUrl(nextUrl, options, redirectsLeft - 1);
+  }
+  return res;
+}
 
 function extractYouTubeId(url) {
   try {
