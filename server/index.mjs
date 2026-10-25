@@ -12,6 +12,7 @@ import { sendWelcomeEmail } from "./welcomeEmail.mjs";
 import { listPosts, getPost, publishPost } from "./blog.mjs";
 import { startDailyBlogScheduler } from "./blog-scheduler.mjs";
 import { aiGuard, issueAiToken } from "./aiGuard.mjs";
+import { requireAllowedOrigin, validateCheckout, validateCaptureEmail, checkoutLimiters, captureLimiters } from "./publicGuard.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
@@ -42,6 +43,7 @@ const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || "https://giantbite-ai.netli
 app.use(cors({ origin: (origin, cb) => cb(null, !origin || ALLOWED_ORIGINS.includes(origin) ? origin || false : false) }));
 // Small body cap everywhere; photo upload route gets a larger (still bounded) cap.
 app.use("/api/recipe", express.json({ limit: "6mb" }));
+app.use(["/api/checkout", "/api/capture-email"], express.json({ limit: "4kb" }));
 app.use(express.json({ limit: "100kb" }));
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
@@ -233,10 +235,10 @@ app.post("/api/nutrition", aiGuard, async (req, res) => {
   }
 });
 
-app.post("/api/checkout", async (req, res) => {
+app.post("/api/checkout", ...checkoutLimiters, requireAllowedOrigin(ALLOWED_ORIGINS), validateCheckout, async (req, res) => {
   try {
     const { plan = "pro", email } = req.body;
-    const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
+    const origin = req.headers.origin; // already checked against ALLOWED_ORIGINS
     const url = await createCheckoutSession({
       plan,
       origin,
@@ -265,7 +267,7 @@ app.get("/api/verify-checkout", async (req, res) => {
 });
 
 // Free-tier / pre-account email capture (motivation welcome)
-app.post("/api/capture-email", async (req, res) => {
+app.post("/api/capture-email", ...captureLimiters, requireAllowedOrigin(ALLOWED_ORIGINS), validateCaptureEmail, async (req, res) => {
   try {
     const { email, name, source = "signup" } = req.body || {};
     const result = await sendWelcomeEmail({ email, plan: "free", name });
