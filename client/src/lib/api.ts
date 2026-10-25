@@ -65,10 +65,16 @@ export function getBlogPost(slug: string) {
   return getJSON<{ post: BlogPost }>(`/blog/${slug}`);
 }
 
+export const AI_TOKEN_KEY = "gba_ai_token";
+function authHeaders(): Record<string, string> {
+  const t = typeof localStorage !== "undefined" ? localStorage.getItem(AI_TOKEN_KEY) : null;
+  return t ? { Authorization: `Bearer ${t}` } : {};
+}
+
 async function postJSON<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
@@ -103,7 +109,9 @@ export async function verifyCheckout(sessionId: string) {
     const detail = await res.json().catch(() => ({}));
     throw new Error(detail.error || `Request failed (${res.status})`);
   }
-  return res.json() as Promise<{ paid: boolean; email?: string | null }>;
+  const data = (await res.json()) as { paid: boolean; email?: string | null; aiToken?: string | null };
+  if (data.aiToken) localStorage.setItem(AI_TOKEN_KEY, data.aiToken);
+  return data;
 }
 
 export function captureEmail(email: string, name?: string) {
@@ -150,7 +158,7 @@ export type ChatMessage = { role: "user" | "assistant"; content: string };
 export async function* streamCoach(messages: ChatMessage[]): AsyncGenerator<string> {
   const res = await fetch("/api/coach", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify({ messages }),
   });
   if (!res.ok || !res.body) {

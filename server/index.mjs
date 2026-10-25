@@ -11,11 +11,13 @@ import { createCheckoutSession, verifyCheckoutSession } from "./stripe.mjs";
 import { sendWelcomeEmail } from "./welcomeEmail.mjs";
 import { listPosts, getPost, publishPost } from "./blog.mjs";
 import { startDailyBlogScheduler } from "./blog-scheduler.mjs";
+import { aiGuard, issueAiToken } from "./aiGuard.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIST = join(__dirname, "..", "client", "dist");
 
 const app = express();
+app.set("trust proxy", 1); // Railway sits behind one proxy hop; needed for per-IP limits
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -35,8 +37,12 @@ app.use((_req, res, next) => {
   ].join('; '));
   next();
 });
-app.use(cors());
-app.use(express.json({ limit: "15mb" }));
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || "https://giantbite-ai.netlify.app,https://giantbiteai-production.up.railway.app")
+  .split(",").map((o) => o.trim()).filter(Boolean);
+app.use(cors({ origin: (origin, cb) => cb(null, !origin || ALLOWED_ORIGINS.includes(origin) ? origin || false : false) }));
+// Small body cap everywhere; photo upload route gets a larger (still bounded) cap.
+app.use("/api/recipe", express.json({ limit: "6mb" }));
+app.use(express.json({ limit: "100kb" }));
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
@@ -72,7 +78,7 @@ app.post("/api/blog", (req, res) => {
   }
 });
 
-app.post("/api/recipe", async (req, res) => {
+app.post("/api/recipe", aiGuard, async (req, res) => {
   try {
     const {
       ingredientsText = "",
@@ -118,7 +124,7 @@ app.post("/api/recipe", async (req, res) => {
   }
 });
 
-app.post("/api/import-recipe", async (req, res) => {
+app.post("/api/import-recipe", aiGuard, async (req, res) => {
   try {
     const { url = "", rawText = "" } = req.body;
     let sourceText = rawText;
@@ -156,7 +162,7 @@ app.post("/api/import-recipe", async (req, res) => {
   }
 });
 
-app.post("/api/mealplan", async (req, res) => {
+app.post("/api/mealplan", aiGuard, async (req, res) => {
   try {
     const { days = 7, dietary = "", householdSize = 2, budgetLevel = "moderate", goals = "" } = req.body;
     const messages = [
@@ -173,7 +179,7 @@ app.post("/api/mealplan", async (req, res) => {
   }
 });
 
-app.post("/api/coach", async (req, res) => {
+app.post("/api/coach", aiGuard, async (req, res) => {
   try {
     const { messages = [] } = req.body;
     const upstream = await streamText({
@@ -197,7 +203,7 @@ app.post("/api/coach", async (req, res) => {
   }
 });
 
-app.post("/api/pairing", async (req, res) => {
+app.post("/api/pairing", aiGuard, async (req, res) => {
   try {
     const { dish = "" } = req.body;
     if (!dish.trim()) throw Object.assign(new Error("Tell me what you're serving."), { status: 400 });
@@ -212,7 +218,7 @@ app.post("/api/pairing", async (req, res) => {
   }
 });
 
-app.post("/api/nutrition", async (req, res) => {
+app.post("/api/nutrition", aiGuard, async (req, res) => {
   try {
     const { food = "", brand = "" } = req.body;
     if (!food.trim()) throw Object.assign(new Error("Tell me what food you want to look up."), { status: 400 });
@@ -251,7 +257,8 @@ app.get("/api/verify-checkout", async (req, res) => {
       // Fire-and-forget motivation welcome — never block unlock
       sendWelcomeEmail({ email, plan: plan || "pro", name: undefined }).catch(() => {});
     }
-    res.json({ paid, email: email || null });
+    const aiToken = paid && email ? issueAiToken({ email, plan: plan || "pro" }) : null;
+    res.json({ paid, email: email || null, aiToken });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
   }
@@ -442,8 +449,12 @@ function htmlToText(html) {
 app.use(express.static(CLIENT_DIST));
 app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(join(CLIENT_DIST, "index.html")));
 
-const PORT = process.env.PORT || 8787;
-app.listen(PORT, () => {
-  console.log(`GiantBiteAI server listening on :${PORT}`);
-  startDailyBlogScheduler();
-});
+export default app;
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const PORT = process.env.PORT || 8787;
+  app.listen(PORT, () => {
+    console.log(`GiantBiteAI server listening on :${PORT}`);
+    startDailyBlogScheduler();
+  });
+}
