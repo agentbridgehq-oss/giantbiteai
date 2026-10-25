@@ -127,7 +127,7 @@ export default function Terms() {
         <section>
           <h2 className="text-lg font-semibold text-white">12. Contact</h2>
           <p className="mt-2">
-            Questions about these Terms? Email <a href="mailto:hunter82kh@gmail.com" className="text-ember-400 hover:underline">hunter82kh@gmail.com</a>.
+            Questions about these Terms? Email <a href="mailto:agentbridgehq@gmail.com" className="text-ember-400 hover:underline">agentbridgehq@gmail.com</a>.
           </p>
         </section>
       </div>
